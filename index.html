@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Holdfast</title>
+<title>Holdfast · Your little island</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='44' fill='%2351cf66' stroke='%23237a35' stroke-width='8'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -94,318 +94,46 @@ dialog.sheet{margin:auto auto 0;width:100%;max-width:480px;border-radius:26px 26
 .mn button+button{border-top:1px solid rgba(255,255,255,.06)}
 .mn.s{margin-top:10px}.mn.s button{opacity:.7}
 @media(prefers-reduced-motion:reduce){.msg,.gift{animation:none}}
+
+:root{--muted:#a3aea7;--line:rgba(232,226,212,.12);--green:#9ec5a6;color-scheme:dark}
+body{user-select:auto;background:radial-gradient(110% 70% at 50% 0,#1e3337,#0a1117 75%)}
+button{touch-action:manipulation}button svg{pointer-events:none}button:focus-visible,input:focus-visible{outline:2px solid var(--brass);outline-offset:3px}
+.wrap{padding:18px 14px 145px}.brand{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.wordmark{font-size:13px;text-transform:uppercase;letter-spacing:3px;font-weight:700}.demo-tag{font-size:10px;color:#c0c8be;border:1px solid var(--line);padding:6px 9px;border-radius:20px;letter-spacing:.15px}
+.pill{min-height:54px;padding:5px 5px 5px 12px;gap:7px}.pill.big{font-size:19px}.balance-copy small{display:block;font-size:9px;color:var(--muted);margin-bottom:3px;text-transform:uppercase;letter-spacing:1px}.balance-copy strong{font-size:19px;font-weight:600;white-space:nowrap}.gold-amount{display:flex;align-items:center;gap:6px}.balance-action{width:38px;height:38px}.burger{height:44px}.island-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:24px 0 12px}.island-heading h1{font-family:Georgia,serif;font-size:30px;font-weight:400;margin:0}.island-heading p{color:var(--muted);font-size:12px;margin:6px 0 0}.tiny-button{background:none;color:var(--muted);border:0;padding:8px;font-size:12px}
+.goal-banner{display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.025);padding:12px 14px;width:100%;text-align:left}.goal-copy{flex:1;min-width:0}.goal-banner strong{font-size:12px;font-weight:600;display:block}.goal-banner small{color:var(--muted);display:block;font-size:11px;margin-top:5px}.progress{background:rgba(255,255,255,.1);height:5px;border-radius:5px;overflow:hidden;margin-top:9px}.progress i{display:block;height:100%;background:var(--brass);border-radius:inherit;transition:width .5s}.goal-number{font-size:12px;color:var(--green);white-space:nowrap}
+#cv{border-radius:17px;margin-top:12px;touch-action:manipulation}.visit-banner{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 14px;background:#273948;border-radius:12px;margin-top:12px;font-size:12px}.dock{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}.dock button{background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:12px;padding:13px 4px;color:#c8d1c6;font-size:11px;display:flex;gap:6px;align-items:center;justify-content:center}.dock button:hover{background:rgba(255,255,255,.08)}.service-note{font-size:11px;text-align:center;color:var(--muted);line-height:1.6;margin:14px 4px 0}.bottom{z-index:3}.msg{animation:none;max-width:500px;line-height:1.5;font-size:12px}#sel small{display:block;margin-top:4px}
+.auth{max-width:430px;margin:7vh auto 0;padding:28px 24px}.auth .emblem{display:block;margin:0 auto 24px}.eyebrow{text-transform:uppercase;letter-spacing:2px;font-size:10px;color:var(--brass);font-weight:600}.auth h1{font-family:Georgia,serif;font-size:58px;font-weight:400;letter-spacing:-2px}.auth p{font-size:14px;line-height:1.8;color:#b3beb5;margin:14px 0 28px}.auth .demo-tag{display:inline-block;margin-top:18px}.b{min-height:44px}.b.full{width:100%}.err:empty{display:none}
+dialog{max-height:90dvh;overflow-y:auto;padding:26px;border-radius:22px}dialog::backdrop{backdrop-filter:blur(5px)}dialog h2{font-family:Georgia,serif;font-size:27px;font-weight:400;margin:4px 26px 12px 0;text-align:left}dialog h3{font-size:14px;margin:0 0 7px}dialog p{font-size:13px;line-height:1.7;color:#b9c3bb}.sub{font-size:12px!important;color:var(--muted)!important}.row{align-items:center;gap:10px}.stack{display:grid;gap:10px;margin-top:18px}.field{display:block;margin-top:16px}.field span{display:block;font-size:12px;margin-bottom:7px;color:#bcc8bd}.field input{width:100%;font-size:16px}input[type=file]{width:100%;font-size:12px}.opt canvas{width:80px;height:70px}.opt .copy{flex:1;min-width:0}.opt small{display:block;color:var(--muted);font-size:11px;line-height:1.6}.opt b{font-size:14px;display:block;margin-bottom:4px}.opt .b{padding:9px 11px;font-size:12px}.card{background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:13px;padding:15px;margin-top:12px}.card p{margin:6px 0 0;font-size:12px}.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.summary-grid .card{margin:0}.summary-grid small{display:block;font-size:10px;color:var(--muted);margin-bottom:7px}.summary-grid strong{font-size:23px;font-weight:600}.receipt{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);font-size:12px}.receipt small{color:var(--muted);display:block;margin-top:4px}.menu-list{display:grid;gap:8px;margin-top:18px}.menu-list button{text-align:left;justify-content:flex-start}.choice{display:block;width:100%;text-align:left;line-height:1.5;padding:14px;background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:12px;margin-top:9px;font-size:13px}.choice:hover{border-color:var(--brass)}.theme-options{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px}.theme-option{border:1px solid var(--line);background:rgba(255,255,255,.035);border-radius:12px;padding:12px 5px;font-size:11px}.theme-option[aria-pressed=true]{border-color:var(--brass);color:var(--brass)}.theme-swatch{height:40px;margin:0 5px 8px;border-radius:7px;background:linear-gradient(145deg,#567b60,#132e38)}.theme-swatch.coast{background:linear-gradient(145deg,#97a274,#27556b)}.theme-swatch.night{background:linear-gradient(145deg,#68739d,#17243e)}.reward-amount{font-family:Georgia,serif;font-size:65px;text-align:center;color:#f1d49c;margin:20px 0 10px}.celebration{text-align:center}.celebration h2{margin:10px 0}.celebration .eyebrow{margin-top:15px}.celebration .sigil{font-size:40px;color:var(--brass);margin-top:10px}
+.ap{font-size:clamp(38px,14vw,68px)}.ap input{max-width:calc(100% - 1ch)}
+@media(min-width:600px){.wrap{padding-top:24px}.island-heading h1{font-size:36px}.dock button{padding:15px;font-size:12px}}@media(max-width:360px){.balance-copy strong{font-size:16px}.pill.balance{padding-left:8px;gap:5px}.balance-action{width:32px}.dock button{font-size:10px}.wrap{padding-left:10px;padding-right:10px}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
 </style>
 </head>
 <body>
-<main class="auth" id="login" hidden>
-  <svg width="64" height="64" viewBox="0 0 64 64" fill="rgba(201,164,92,.1)" stroke="#c9a45c" stroke-width="2" stroke-linejoin="round"><path d="M32 6 58 20v24L32 58 6 44V20z"/><path d="M6 20l26 14 26-14M32 34v24"/></svg>
-  <h1>Holdfast</h1>
-  <p>Money you keep builds your island. Every deposit brings your island to life. Keep your money in and watch it grow.</p>
-  <p class="err" id="err" role="alert"></p>
-  <button class="b g" data-a="g">Continue with Google</button>
-  <button class="b alt" data-a="guest">Play as guest</button>
+<main class="auth" id="login">
+  <svg class="emblem" width="94" height="94" viewBox="0 0 94 94" fill="none" aria-hidden="true"><path d="M47 8 83 29v36L47 86 11 65V29z" fill="#c9a45c" fill-opacity=".07" stroke="#c9a45c"/><path d="m27 51 20-12 20 12-20 12z" fill="#58785c"/><path d="M38 47V34l9-6 10 6v13l-10 6z" fill="#b1a085"/><path d="m35 35 12-14 13 14-13-6z" fill="#98694c"/><path d="M47 42v10" stroke="#5d4934" stroke-width="5"/></svg>
+  <span class="eyebrow">A place for your plans</span><h1>Holdfast</h1>
+  <p>Build a little island.<br>Make room for your goals.</p>
+  <button class="b g" data-a="begin">Start your island <span aria-hidden="true">↗</span></button>
+  <span class="demo-tag">Demo · no real money moves</span><p class="sub">Your first cabin is on us. No deposit needed.</p>
 </main>
-
-<div class="wrap" id="game" hidden>
+<main class="wrap" id="game" hidden>
+  <div class="brand"><span class="wordmark">Holdfast</span><span class="demo-tag">Demo · no real money moves</span></div>
   <div class="top">
-    <div class="pill big balance"><span>£</span><span id="sv">0</span><button class="balance-action add" data-a="dep" aria-label="Deposit" title="Deposit"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></div>
-    <div class="pill balance"><i class="coin" aria-hidden="true"></i><span id="coins">0</span><button class="balance-action" data-a="shop" aria-label="Shop" title="Shop"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10v10h16V10M3 6l2-3h14l2 3v4a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0V6zM9 20v-6h6v6M3 6h18"/></svg></button></div>
-    <div class="pill" hidden><i class="star"></i><span id="tx"></span></div>
-    <span class="day" id="day" hidden></span>
-    <div class="sp"></div><button class="chip" id="cancel" data-a="pcancel" hidden>✕ Cancel</button><button class="burger" data-a="menu" aria-label="Menu"><svg width="18" height="18" viewBox="0 0 18 18" stroke="#e8e2d4" stroke-width="2" stroke-linecap="round"><path d="M2 5h14M2 9h14M2 13h14"/></svg></button>
+    <div class="pill big balance"><div class="balance-copy"><small>Demo savings</small><strong>£<span id="sv">0</span></strong></div><button class="balance-action add" data-a="dep" aria-label="Deposit" title="Deposit"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></div>
+    <div class="pill balance"><div class="balance-copy"><small>Game gold</small><strong class="gold-amount"><i class="coin" aria-hidden="true"></i><span id="coins">100</span></strong></div><button class="balance-action" data-a="shop" aria-label="Shop" title="Shop"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10v10h16V10M3 6l2-3h14l2 3v4a3 3 0 0 1-6 0 3 3 0 0 1-6 0V6zM9 20v-6h6v6M3 6h18"/></svg></button></div>
+    <div class="sp"></div><button class="chip" id="cancel" data-a="pcancel" hidden>Cancel</button><button class="burger" data-a="menu" aria-label="Menu" title="Menu"><svg width="18" height="18" viewBox="0 0 18 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 5h14M2 9h14M2 13h14"/></svg></button>
   </div>
-  <canvas id="cv" width="800" height="560"></canvas>
-</div>
-
-<div class="bottom" id="bot" hidden>
-  <div class="msg" id="msg" hidden></div>
-  <div id="sel" hidden><div class="t"><b id="sn"></b><br><small id="si"></small></div><button class="b g" id="su" data-a="selu"></button></div>
-</div>
-
-<dialog id="dlg"></dialog>
-<div id="toast"></div>
-
-<script type="module">
-import {initializeApp} from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
-import {getAuth,onAuthStateChanged,GoogleAuthProvider,signInWithPopup,signOut} from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
-import {getFirestore,doc,setDoc,getDoc} from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
-
-const CFG={apiKey:"AIzaSyAJioajokVOh_a0DH9vldeCAz2jzTTzMG8",authDomain:"kaulto-investor-dashboard.firebaseapp.com",projectId:"kaulto-investor-dashboard",storageBucket:"kaulto-investor-dashboard.firebasestorage.app",messagingSenderId:"502424779951",appId:"1:502424779951:web:8cfe3de97dcfcc2614685a"};
-const fb=initializeApp(CFG),auth=getAuth(fb),db=getFirestore(fb);
-
-const $=s=>document.querySelector(s),dlg=$('#dlg'),cv=$('#cv');let c=cv.getContext('2d');const _sm=dlg.showModal.bind(dlg);dlg.showModal=()=>{if(!dlg.open)_sm()};
-const B={cabin:{n:'Cabin',c:100,s:30,w:'#8c7a62',r:'#6e3b30'},mill:{n:'Windmill',c:250,s:120,w:'#b8b2a2',r:'#4a5f78'},library:{n:'Library',c:600,s:600,w:'#6c6480',r:'#2f2a3d'},greenhouse:{n:'Greenhouse',c:1500,s:3600,w:'#7ea396',r:'#8fb8c4'},lighthouse:{n:'Lighthouse',c:4000,s:14400,w:'#cfc9bd',r:'#8c3a33'},observatory:{n:'Observatory',c:10000,s:43200,w:'#4a5470',r:'#a8883c'}}; /* s = build seconds, c = gold cost */
-const N=12,W=64,H=32,OX=400,OY=120,HQ={x:4,y:4},HW=24,MAT=20;
-const P=(x,y)=>[OX+(x-y)*W/2,OY+(x+y)*H/2];
-const inv=(lx,ly)=>{const u=(lx-OX)/(W/2),v=(ly-OY)/(H/2);return[(u+v)/2,(v-u)/2]};
-const fmt=n=>{n=Math.floor(n);const u=['','K','M','B'];let i=0,x=n;while(x>=1000&&i<3){x/=1000;i++}return(i?x.toFixed(x<10?2:x<100?1:0):x)+u[i]};
-const gbp=p=>'£'+(p/100).toFixed(p%100?2:0);
-const tl=ms=>{const s=Math.max(1,Math.ceil(ms/1000));return s<60?s+'s':s<3600?Math.ceil(s/60)+'m':Math.floor(s/3600)+'h '+Math.ceil(s%3600/60)+'m'};
-const cost=t=>Math.round(B[t].c*Math.pow(1.6,G.b.filter(b=>b.t===t).length));
-const days=()=>G.sv>0&&G.since?Math.floor((Date.now()-G.since)/864e5)+1:0;
-const CI='<i class="coin"></i>',CUBE='<svg width="84" height="84" viewBox="0 0 64 64" fill="rgba(201,164,92,.1)" stroke="#c9a45c" stroke-width="2" stroke-linejoin="round"><path d="M32 6 58 20v24L32 58 6 44V20z"/><path d="M6 20l26 14 26-14M32 34v24"/></svg>';
-
-let G={coins:100,b:[],sv:0,tix:0,since:0,cl:0},U=null,mode=null,ghost=null,sel=null,saveT,ui,hits=[],last=Date.now();
-
-const free=(x,y,ex)=>x>=1&&y>=1&&x<=N-3&&y<=N-3&&!(x<HQ.x+3&&x+2>HQ.x&&y<HQ.y+3&&y+2>HQ.y)&&!G.b.some(b=>b!==ex&&Math.abs(b.x-x)<2&&Math.abs(b.y-y)<2);
-
-function toast(m){const t=$('#toast');t.textContent=m;t.style.opacity=1;clearTimeout(toast.h);toast.h=setTimeout(()=>t.style.opacity=0,2400)}
-let ac;function beep(f=520){try{ac=ac||new AudioContext();const o=ac.createOscillator(),g=ac.createGain();o.type='triangle';o.frequency.value=f;o.frequency.exponentialRampToValueAtTime(f*1.6,ac.currentTime+.12);g.gain.setValueAtTime(.1,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.18);o.connect(g).connect(ac.destination);o.start();o.stop(ac.currentTime+.2)}catch{}}
-const toClient=(lx,ly)=>{const r=cv.getBoundingClientRect();return[r.left+lx*r.width/800,r.top+ly*r.height/560]};
-function fx(cx,cy,text,cls='coin'){
-  const p=document.createElement('div');p.className='pop';p.textContent=text;p.style.left=cx+'px';p.style.top=cy+'px';document.body.append(p);setTimeout(()=>p.remove(),1100);
-  for(let k=0;k<14;k++){const s=document.createElement('i');s.className=cls+' pa';s.style.left=cx+'px';s.style.top=cy+'px';
-    s.style.setProperty('--x',(Math.random()*260-130)+'px');s.style.setProperty('--y',(Math.random()*-220-20)+'px');s.style.setProperty('--r',(Math.random()*720-360)+'deg');document.body.append(s);setTimeout(()=>s.remove(),900)}
-}
-const fxAt=(b,text,cls)=>{const p=P(b.x+1,b.y+1),[x,y]=toClient(p[0],p[1]-HW-40);fx(x,y,text,cls)};
-
-/* ---------- save / load ----------
-   Uses the existing Firestore fields: coins = gold, plots = buildings, total = savings in pence,
-   streak = days held, lastDay = JSON {s: hold start, c: daily rewards claimed, t: golden tickets}, ts = last save. */
-function save(){
-  const d={coins:G.coins,plots:G.b,streak:days(),lastDay:JSON.stringify({s:G.since,c:G.cl,t:G.tix}),total:G.sv,ts:Date.now()};
-  try{localStorage['hf_'+(U?U.uid:'guest')]=JSON.stringify(d)}catch{}
-  if(!U)return;clearTimeout(saveT);
-  saveT=setTimeout(()=>setDoc(doc(db,'mines',U.uid),JSON.parse(JSON.stringify(d))).catch(()=>{}),1200);
-}
-async function load(){
-  let g=null;try{g=JSON.parse(localStorage['hf_'+(U?U.uid:'guest')]||'null')}catch{}
-  if(U){try{const s=await getDoc(doc(db,'mines',U.uid));if(s.exists()&&(!g||(s.data().ts||0)>=(g.ts||0)))g=s.data()}catch{}}
-  const raw=((g&&g.plots)||[]).filter(p=>p&&typeof p==='object'&&B[p.t]&&Number.isFinite(p.x)&&Number.isFinite(p.y)&&Number.isFinite(p.d));
-  let m={};try{m=JSON.parse(g.lastDay)||{}}catch{}
-  G={b:[],coins:raw.length?(g.coins||0):100,sv:raw.length?Math.max(0,+g.total||0):0,tix:+m.t||0,since:+m.s||0,cl:+m.c||0};
-  raw.forEach(p=>{if(free(p.x,p.y))G.b.push({t:p.t,x:p.x,y:p.y,p:+p.p||0,d:p.d,ok:p.ok?1:0,ch:p.ch?1:0})});
-  if(G.sv>0&&!G.since)G.since=Date.now();
-  last=(raw.length&&g.ts)||Date.now(); /* builders keep working while you were away, if money is held */
-}
-
-/* ---------- drawing ---------- */
-function sh(h,f){const n=parseInt(h.slice(1),16),r=n>>16,g=n>>8&255,b=n&255,m=f<0?0:255,k=Math.abs(f),q=v=>Math.round(v+(m-v)*k);return`rgb(${q(r)},${q(g)},${q(b)})`}
-function poly(p,fill,st,lw=2){c.beginPath();p.forEach((v,i)=>c[i?'lineTo':'moveTo'](v[0],v[1]));c.closePath();if(fill){c.fillStyle=fill;c.fill()}if(st){c.strokeStyle=st;c.lineWidth=lw;c.lineJoin='round';c.stroke()}}
-const lp=(a,b,f)=>[a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f];
-function quad(a,b,f0,f1,z0,z1,col){const p=lp(a,b,f0),q=lp(a,b,f1);poly([[p[0],p[1]-z0],[q[0],q[1]-z0],[q[0],q[1]-z1],[p[0],p[1]-z1]],col)}
-const shadow=(p,rx,ry)=>{c.fillStyle='rgba(0,0,0,.22)';c.beginPath();c.ellipse(p[0]+6,p[1]+5,rx,ry,0,0,7);c.fill()};
-const foot=(x,y,s=2)=>[P(x,y),P(x+s,y),P(x+s,y+s),P(x,y+s)];
-const rnd=j=>{const s=Math.sin(j*127.1+311.7)*43758.5;return s-Math.floor(s)};
-
-function tree(x,y){
-  const p=P(x+.5,y+.5),s=.9+rnd(x*9+y)*.35;
-  shadow([p[0],p[1]],14*s,6*s);c.fillStyle='#2a2118';c.fillRect(p[0]-2*s,p[1]-8*s,4*s,10*s);
-  [['#1f3a2e',16,-8,26],['#274a39',13,-20,22],['#2f5844',9,-31,18]].forEach(([col,w,dy,h])=>poly([[p[0]-w*s,p[1]+dy*s],[p[0]+w*s,p[1]+dy*s],[p[0],p[1]+(dy-h)*s]],col));
-}
-function hall(t){
-  const x=HQ.x,y=HQ.y,s=3,i=.08,h=46,A=P(x+i,y+i),Bp=P(x+s-i,y+i),C=P(x+s-i,y+s-i),D=P(x+i,y+s-i),u=(p,z=h)=>[p[0],p[1]-z],ct=P(x+1.5,y+1.5);
-  shadow(ct,100,44);
-  poly([D,C,u(C),u(D)],'#6b665a');poly([C,Bp,u(Bp),u(C)],'#8a8473');
-  [.16,.68].forEach(f=>{quad(D,C,f,f+.16,22,38,'#4a3320');quad(D,C,f+.02,f+.14,24,36,'#f2c879')});
-  quad(C,Bp,.34,.66,0,28,'#4a3320');quad(C,Bp,.38,.62,0,25,'#6b4423');
-  quad(D,C,0,1,h-5,h,'#7a6238');quad(C,Bp,0,1,h-5,h,'#9a7d45');
-  const e=.32,ap=[ct[0],ct[1]-h-54],D2=P(x-e,y+s+e),C2=P(x+s+e,y+s+e),B2=P(x+s+e,y-e);
-  poly([u(D2),u(C2),ap],'#3e4a56','#222b33',2);poly([u(C2),u(B2),ap],'#53626f','#222b33',2);
-  c.strokeStyle='#4a3320';c.lineWidth=3;c.beginPath();c.moveTo(ap[0],ap[1]);c.lineTo(ap[0],ap[1]-36);c.stroke();
-  const w=Math.sin(t/170)*3;poly([[ap[0],ap[1]-36],[ap[0]+26,ap[1]-30+w],[ap[0],ap[1]-20]],'#c9a45c','rgba(0,0,0,.35)',1.5);
-}
-function worker(p,t,run){
-  const s=run?Math.sin(t/110):0;
-  c.fillStyle='#f4c27a';c.beginPath();c.arc(p[0],p[1]-17,5,0,7);c.fill();
-  c.fillStyle='#d9822b';c.fillRect(p[0]-5,p[1]-12,10,12);c.fillStyle='#e8e2d4';c.fillRect(p[0]-6,p[1]-24,12,4);
-  c.strokeStyle='#6b4423';c.lineWidth=3;c.beginPath();c.moveTo(p[0]+5,p[1]-8);c.lineTo(p[0]+5+10*Math.cos(s),p[1]-12-10*Math.abs(Math.sin(s)));c.stroke();
-}
-function bld(x,y,k,pr,t,run,ok){
-  const tp=B[k],i=.1,h=ok?HW:HW*(.2+.8*pr),A=P(x+i,y+i),Bp=P(x+2-i,y+i),C=P(x+2-i,y+2-i),D=P(x+i,y+2-i),u=(p,z=h)=>[p[0],p[1]-z],ct=P(x+1,y+1);
-  shadow(ct,66,28);
-  poly([D,C,u(C),u(D)],sh(tp.w,-.25));poly([C,Bp,u(Bp),u(C)],sh(tp.w,-.05));
-  if(ok){
-    quad(D,C,.2,.4,8,19,'#f2c879');quad(D,C,.6,.8,8,19,'#f2c879');quad(C,Bp,.38,.62,0,17,'#3b2410');
-    const ap=[ct[0],ct[1]-h-30];
-    if(k==='observatory'){c.fillStyle=tp.r;c.beginPath();c.arc(ct[0],ct[1]-h,32,Math.PI,0);c.fill();c.strokeStyle='rgba(0,0,0,.3)';c.lineWidth=2;c.stroke()}
-    else{poly([u(D),u(C),ap],tp.r,'rgba(0,0,0,.3)',1.5);poly([u(C),u(Bp),ap],sh(tp.r,.2),'rgba(0,0,0,.3)',1.5)}
-    if(k==='mill'){c.strokeStyle='#f4efe4';c.lineWidth=4;for(let j=0;j<4;j++){const a=t/700+j*Math.PI/2;c.beginPath();c.moveTo(ap[0],ap[1]);c.lineTo(ap[0]+Math.cos(a)*34,ap[1]+Math.sin(a)*34);c.stroke()}}
-    if(k==='lighthouse'){c.fillStyle=`rgba(255,240,150,${.55+.3*Math.sin(t/250)})`;c.beginPath();c.arc(ap[0],ap[1],10,0,7);c.fill()}
-  }else{
-    poly([u(A),u(Bp),u(C),u(D)],sh(tp.w,.2),'rgba(0,0,0,.25)');
-    const top=HW+16;c.strokeStyle='#8a7556';c.lineWidth=3;
-    [D,C,Bp].forEach(p=>{c.beginPath();c.moveTo(p[0],p[1]);c.lineTo(p[0],p[1]-top);c.stroke()});
-    [top*.5,top].forEach(z=>{c.beginPath();c.moveTo(D[0],D[1]-z);c.lineTo(C[0],C[1]-z);c.lineTo(Bp[0],Bp[1]-z);c.stroke()});
-    worker(P(x+1.2,y+1.7),t,run);
-  }
-}
-function chest(x,y){
-  const g=c.createRadialGradient(x,y,2,x,y,34);g.addColorStop(0,'rgba(242,200,121,.45)');g.addColorStop(1,'rgba(242,200,121,0)');c.fillStyle=g;c.fillRect(x-40,y-40,80,80);
-  c.fillStyle='#3b2c1f';c.fillRect(x-15,y-6,30,18);poly([[x-15,y-6],[x+15,y-6],[x+12,y-14],[x-12,y-14]],'#4d3a29');
-  c.fillStyle='#c9a45c';c.fillRect(x-2,y-14,4,26);c.fillRect(x-15,y-2,30,2);
-}
-function drawB(b,t){
-  const ct=P(b.x+1,b.y+1),Cc=P(b.x+2,b.y+2),run=G.sv>0&&!b.ok;
-  if(sel===b)poly(foot(b.x,b.y),'rgba(255,255,255,.3)','#fff',3+Math.sin(t/150)*1.5);
-  bld(b.x,b.y,b.t,b.p/b.d,t,run,b.ok);
-  if(!b.ok){
-    c.fillStyle='rgba(0,0,0,.55)';c.beginPath();c.roundRect(Cc[0]-34,Cc[1]+4,68,15,7);c.fill();
-    c.fillStyle=run?'#c9a45c':'#6b7785';c.beginPath();c.roundRect(Cc[0]-32,Cc[1]+6,64*b.p/b.d,11,5);c.fill();
-    c.fillStyle='#fff';c.font='600 10px Sora,sans-serif';c.fillText(run?tl(b.d-b.p):'Paused',Cc[0],Cc[1]+12);
-  }else if(b.ch){const by=ct[1]-HW-62+Math.sin(t/300+b.x)*4;hits.push({b,x:ct[0],y:by});chest(ct[0],by)}
-}
-
-function draw(t){
-  c.clearRect(0,0,800,560);
-  const g=c.createLinearGradient(0,0,0,560);g.addColorStop(0,'#12293a');g.addColorStop(1,'#070e15');c.fillStyle=g;c.fillRect(0,0,800,560);
-  c.strokeStyle='rgba(255,255,255,.06)';c.lineWidth=3;
-  for(let k=0;k<7;k++){const x=(k*151+t/60)%900-50,y=36+k*76;c.beginPath();c.arc(x,y,16,Math.PI*1.1,Math.PI*1.9);c.stroke()}
-  poly([P(-.5,-.5),P(N+.5,-.5),P(N+.5,N+.5),P(-.5,N+.5)],`rgba(160,190,210,${.07+.03*Math.sin(t/500)})`);
-  const L=P(0,N),Bt=P(N,N),R=P(N,0),d=28;
-  poly([L,Bt,[Bt[0],Bt[1]+d],[L[0],L[1]+d]],'#26241f');poly([R,Bt,[Bt[0],Bt[1]+d],[R[0],R[1]+d]],'#302d26');
-  for(let y=0;y<N;y++)for(let x=0;x<N;x++){
-    const pz=x>=HQ.x-1&&x<=HQ.x+3&&y>=HQ.y-1&&y<=HQ.y+3,a=(x+y)%2;
-    poly([P(x,y),P(x+1,y),P(x+1,y+1),P(x,y+1)],pz?(a?'#8c8068':'#857a63'):(a?'#40604d':'#3c5b49'));
-  }
-  if(mode)for(let y=1;y<N-1;y++)for(let x=1;x<N-1;x++)poly([P(x,y),P(x+1,y),P(x+1,y+1),P(x,y+1)],0,'rgba(255,255,255,.22)',1);
-  c.textAlign='center';c.textBaseline='middle';
-  const items=[{k:0,d:HQ.x+HQ.y+3}];
-  for(let y=0;y<N;y++)for(let x=0;x<N;x++)if((x==0||y==0||x==N-1||y==N-1)&&(x*31+y*17)%5<3)items.push({k:1,x,y,d:x+y+1});
-  G.b.forEach(b=>items.push({k:2,b,d:b.x+b.y+2}));
-  if(mode&&ghost)items.push({k:3,d:ghost.x+ghost.y+2});
-  items.sort((a,b)=>a.d-b.d);hits=[];
-  for(const it of items){
-    if(it.k==1)tree(it.x,it.y);else if(it.k==0){hall(t);if(due()){const q=P(HQ.x+1.5,HQ.y+1.5),by=q[1]-162+Math.sin(t/300)*4;hits.push({d:1,x:q[0],y:by});chest(q[0],by)}}else if(it.k==2)drawB(it.b,t);
-    else{const ok=free(ghost.x,ghost.y);c.globalAlpha=.8;bld(ghost.x,ghost.y,mode,1,t,0,1);c.globalAlpha=1;poly(foot(ghost.x,ghost.y),ok?'rgba(34,197,94,.45)':'rgba(239,68,68,.5)',ok?'#bbf7d0':'#fecaca',3)}
-  }
-  for(let k=0,n=Math.min(40,Math.floor(G.sv/500));k<n;k++){const p=P(1+rnd(k*3)*(N-2),1+rnd(k*7+1)*(N-2)),a=.5+.5*Math.sin(t/400+k*2);c.fillStyle=`rgba(242,200,121,${a*.9})`;c.fillRect(p[0]-1.5,p[1]-12-8*a,3,3)}
-  if(G.b.length&&G.sv<=0){c.fillStyle='rgba(8,16,40,.45)';c.fillRect(0,0,800,560)}
-}
-/* builders only work while money is held */
-function tick(){
-  const n=Date.now(),dt=n-last;last=n;if(G.sv<=0)return;
-  G.b.forEach(b=>{if(b.ok)return;b.p+=dt;if(b.p>=b.d){b.p=b.d;b.ok=1;b.ch=1;beep(760);toast(B[b.t].n+' is complete. Collect your reward.');save()}});
-}
-const frame=t=>{if(!$('#game').hidden){tick();draw(t)}requestAnimationFrame(frame)};requestAnimationFrame(frame);
-
-/* ---------- actions ---------- */
-async function deposit(v){
-  const p=Math.round(v*100);if(!(p>=100))return toast('The minimum deposit is £1');
-  try{if(window.onDeposit&&!(await window.onDeposit(p)))return}catch{return toast('That deposit did not go through')} /* wire your real deposit flow to window.onDeposit */
-  if(!G.sv){G.since=Date.now();G.cl=0}G.sv+=p;
-  const m=Math.round(p/100*MAT),bs=p/100*60000;G.coins+=m;
-  G.b.forEach(b=>{if(!b.ok){b.p=Math.min(b.d,b.p+bs);fxAt(b,'+'+tl(bs),'star')}});
-  dlg.close();fx(innerWidth/2,innerHeight*.45,'+'+fmt(m));beep(700);save();upd();
-  setTimeout(()=>crate(1+Math.sqrt(p/100)/2,'Deposit reward'),900);
-}
-async function withdraw(v){
-  const p=Math.round(v*100);if(!(p>=1&&p<=G.sv))return toast('Enter an amount up to '+gbp(G.sv));
-  try{if(window.onWithdraw&&!(await window.onWithdraw(p)))return}catch{return toast('That withdrawal did not go through')}
-  G.sv-=p;if(!G.sv){G.since=0;G.cl=0}save();upd();dlg.close();
-}
-function openMenu(){
-  dlg.className='sheet';
-  dlg.innerHTML=`<button class="x" data-a="close" aria-label="Close">×</button><div class="sup">Manage funds</div><div class="mn"><button data-a="dep">Deposit</button><button data-a="wdo">Withdraw</button></div><div class="mn s"><button data-a="so">${U?'Sign out':'Exit guest'}</button></div>`;
-  dlg.showModal();
-}
-function openWd(){
-  dlg.className='sheet';
-  dlg.innerHTML=`<button class="x" data-a="close" aria-label="Close">×</button><div class="sup">Withdraw</div><div class="ap"><span>£</span><input id="wu" type="number" min="0" step="any" inputmode="decimal" value="${G.sv/100}" aria-label="Amount"></div><p class="sub">${G.sv?'Available '+gbp(G.sv)+'. Your builders pause if your balance reaches £0.':'You have nothing to withdraw yet.'}</p><button class="b cta" data-a="wgo" ${G.sv?'':'disabled'}>Withdraw</button>`;
-  dlg.showModal();fit($('#wu'));
-}
-function roll(mul){const r=Math.random();if(r<.012)return{k:'tix'};const t=r<.5?0:r<.85?1:r<.97?2:3,a=[[20,60],[80,200],[300,700],[1000,2500]][t];return{k:'m',t,v:Math.round((a[0]+Math.random()*(a[1]-a[0]))*mul)}}
-function crate(mul,title){
-  const rw=roll(mul);if(rw.k==='tix')G.tix++;else G.coins+=rw.v;save();upd();
-  dlg.innerHTML=`<h2>${title}</h2><div class="gift" data-a="rv">${CUBE}</div><p class="sub" id="rt">Tap to open</p><div id="rr" hidden><div class="rw">${rw.k==='tix'?'<i class="star"></i> Golden Ticket':CI+' +'+fmt(rw.v)}</div><p class="sub">${rw.k==='tix'?'Extremely rare':['A small find','A good find','A rare find','Exceptional'][rw.t]}</p></div><div class="row" style="justify-content:center"><button class="b g" id="cl" data-a="close" hidden>Continue</button></div>`;
-  dlg.showModal();
-}
-const openChest=b=>{b.ch=0;crate(1,B[b.t].n+' complete')};
-const due=()=>G.sv>0&&G.since?Math.max(0,Math.floor((Date.now()-G.since)/864e5)-G.cl):0;
-function openDaily(){const n=due();if(!n)return;G.cl+=n;crate((1+Math.sqrt(G.sv/100)/5)*n,'Your money kept growing')}
-const ST=[1,5,10,15,20,25,30,40,50,75,100,150,200,250,300,400,500,750,1000];
-const fit=el=>{el.style.width=(String(el.value).length+.5)+'ch'};
-function sync(mv=1){
-  const a=parseFloat($('#cu').value),ok=a>=1&&a<=10000,sl=$('#sl');fit($('#cu'));
-  if(ok&&mv)sl.value=ST.reduce((b,x,i)=>Math.abs(x-a)<Math.abs(ST[b]-a)?i:b,0);
-  sl.style.setProperty('--p',sl.value/(ST.length-1)*100+'%');
-  $('#go').disabled=!ok;
-}
-function openDep(){
-  dlg.className='sheet';
-  dlg.innerHTML=`<button class="x" data-a="close" aria-label="Close">×</button><div class="sup">Deposit</div><div class="ap"><span>£</span><input id="cu" type="number" min="1" step="any" inputmode="decimal" value="10" aria-label="Amount"></div><input id="sl" class="sl" type="range" min="0" max="${ST.length-1}" step="1" value="${ST.indexOf(10)}" aria-label="Choose an amount"><div class="se"><span>£${ST[0]}</span><span>£1,000</span></div><button class="b g cta" id="go" data-a="go">Deposit</button>`;
-  dlg.showModal();sync();
-}
-function openShop(){
-  dlg.innerHTML=`<h2>Shop</h2>${Object.entries(B).map(([k,t])=>`<div class="opt"><canvas width="96" height="80" data-p="${k}"></canvas><div><b>${t.n}</b><br>Takes ${tl(t.s*1000)} to build</div><button class="b" data-a="pick" data-t="${k}" ${G.coins<cost(k)?'disabled':''}>${CI} ${fmt(cost(k))}</button></div>`).join('')}<div class="row" style="justify-content:center"><button class="link" data-a="close">Close</button></div>`;
-  dlg.showModal();
-  dlg.querySelectorAll('[data-p]').forEach(cn=>{const old=c,x=cn.getContext('2d'),o=P(1,1);c=x;x.textAlign='center';x.save();x.scale(.6,.6);x.translate(80-o[0],110-o[1]);bld(0,0,cn.dataset.p,1,0,0,1);x.restore();c=old});
-}
-function startPlace(t){
-  dlg.close();mode=t;sel=null;let best=null,bd=1e9;
-  for(let y=1;y<=N-3;y++)for(let x=1;x<=N-3;x++)if(free(x,y)){const d=Math.abs(x-3)+Math.abs(y-8);if(d<bd){bd=d;best={x,y}}}
-  if(!best){mode=null;return toast('No room left on your island')}
-  ghost=best;upd();
-}
-function place(){
-  if(!mode||!free(ghost.x,ghost.y))return toast("You can't build there. Pick a green spot");
-  const k=mode,cs=cost(k);if(G.coins<cs)return;
-  G.coins-=cs;const b={t:k,x:ghost.x,y:ghost.y,p:0,d:B[k].s*1000,ok:0,ch:0};G.b.push(b);mode=null;sel=b;save();upd();fxAt(b,'Construction started','star');beep(880);
-}
-const cancel=()=>{mode=null;upd()};
-function upd(){
-  $('#sv').textContent=gbp(G.sv).slice(1);$('#coins').textContent=fmt(G.coins);
-  $('#tx').parentNode.hidden=!G.tix;$('#tx').textContent=G.tix;
-  $('#day').hidden=!G.sv;$('#day').textContent='Day '+days();
-  document.querySelectorAll('.balance-action').forEach(button=>button.hidden=!!mode);$('#cancel').hidden=!mode;
-  const wait=G.b.some(b=>!b.ok)&&G.sv<=0,m=$('#msg');
-  const t=mode?(matchMedia('(pointer:fine)').matches?'Click to place · Right-click or Esc to cancel':'Tap a spot, tap again to build'):!G.b.length?'Open the Shop and start your first Cabin':wait?'Your island is dormant. Deposit to bring it back.':due()?'A reward is waiting at your town hall':'';
-  m.hidden=!t;m.textContent=t;
-  if(sel&&!mode){
-    $('#sel').hidden=false;$('#sn').textContent=B[sel.t].n;
-    $('#si').textContent=sel.ok?(sel.ch?'Complete · reward ready':'Complete'):(G.sv>0?'Building · '+tl(sel.d-sel.p)+' left':'Paused · deposit to continue');
-    $('#su').hidden=!sel.ch;$('#su').textContent='Collect reward';
-  }else $('#sel').hidden=true;
-}
-
-/* ---------- map input ---------- */
-const lg=e=>{const r=cv.getBoundingClientRect();return[(e.clientX-r.left)*800/r.width,(e.clientY-r.top)*560/r.height]};
-const spot=e=>{const[lx,ly]=lg(e),[a,b]=inv(lx,ly+HW);return{x:Math.round(a-1),y:Math.round(b-1)}};
-cv.addEventListener('pointermove',e=>{if(mode&&e.pointerType==='mouse'){ghost=spot(e);upd()}});
-cv.addEventListener('contextmenu',e=>{e.preventDefault();if(mode)cancel()});
-addEventListener('keydown',e=>{if(e.key==='Escape'&&mode)cancel()});
-cv.addEventListener('pointerdown',e=>{
-  if(e.button===2)return;
-  if(mode){const g=spot(e);
-    if(e.pointerType==='mouse'){ghost=g;place()}
-    else if(g.x===ghost.x&&g.y===ghost.y&&free(g.x,g.y))place();
-    else{ghost=g;upd()}
-    return}
-  const[lx,ly]=lg(e);
-  for(const h of hits)if(Math.hypot(lx-h.x,ly-h.y)<28){if(h.d)openDaily();else{sel=h.b;openChest(h.b)}return}
-  const bs=[...G.b].sort((a,b)=>b.x+b.y-a.x-a.y);
-  for(const b of bs){const[a,d]=inv(lx,ly+HW/2+4);if(a>=b.x&&a<b.x+2&&d>=b.y&&d<b.y+2){sel=b;upd();return}}
-  sel=null;upd();
-});
-
-/* ---------- screens + auth ---------- */
-function show(on){$('#login').hidden=on;$('#game').hidden=!on;$('#bot').hidden=!on;clearInterval(ui);if(on){upd();ui=setInterval(upd,500)}}
-async function start(){mode=null;sel=null;await load();show(true)}
-onAuthStateChanged(auth,async u=>{U=u;if(u){await start()}else if(!window.__guest)show(false)});
-
-document.addEventListener('click',async e=>{
-  const el=e.target.closest('[data-a]');if(!el)return;const a=el.dataset.a;
-  if(a==='shop')openShop();
-  else if(a==='dep')openDep();
-  else if(a==='go')deposit(parseFloat($('#cu').value));
-  else if(a==='menu')openMenu();
-  else if(a==='wdo')openWd();
-  else if(a==='wgo')withdraw(parseFloat($('#wu').value));
-  else if(a==='pick')startPlace(el.dataset.t);
-  else if(a==='pcancel')cancel();
-  else if(a==='selu'&&sel&&sel.ch)openChest(sel);
-  else if(a==='rv'){$('#rr').hidden=0;$('#cl').hidden=0;$('#rt').hidden=1;el.hidden=1;fx(innerWidth/2,innerHeight*.4,'');beep(1000)}
-  else if(a==='close')dlg.close();
-  else if(a==='guest'){window.__guest=1;U=null;await start()}
-  else if(a==='so'){dlg.close();window.__guest=0;try{await signOut(auth)}catch{}U=null;show(false)}
-  else if(a==='g'){
-    try{await signInWithPopup(auth,new GoogleAuthProvider())}
-    catch(x){$('#err').textContent=['auth/popup-closed-by-user','auth/cancelled-popup-request'].includes(x.code)?'':'Google sign-in did not complete. Allow pop-ups and check this site is an authorised domain in Firebase.'}
-  }
-});
-document.addEventListener('input',e=>{if(e.target.id==='cu')sync();else if(e.target.id==='wu')fit(e.target);else if(e.target.id==='sl'){$('#cu').value=ST[e.target.value];sync(0);try{navigator.vibrate(4)}catch{}}});
-dlg.addEventListener('close',()=>{dlg.className=''});
-addEventListener('beforeunload',()=>{if(U)save()});
-</script>
+  <div class="island-heading"><div><h1 id="island-name">My island</h1><p id="island-caption">A little more yours, every day.</p></div><button class="tiny-button" data-a="profile" aria-label="Edit island name">Rename ↗</button></div>
+  <button class="goal-banner" data-a="goal"><div class="goal-copy"><strong id="goal-name">What are you making room for?</strong><small id="goal-copy">Choose a savings goal, at your own pace.</small><div class="progress" id="goal-progress" hidden><i id="goal-fill"></i></div></div><span class="goal-number" id="goal-number">Set a goal ↗</span></button>
+  <div class="visit-banner" id="visit-banner" hidden><span id="visit-name"></span><button class="b" data-a="leave-visit">Back to my island</button></div>
+  <canvas id="cv" width="800" height="560" aria-label="Your island. Select buildings to inspect them; choose Shop to add a building."></canvas>
+  <nav class="dock" aria-label="Island activities"><button data-a="goal">◎ <span>Your goal</span></button><button data-a="learn">◇ <span>Learn</span></button><button data-a="design">✧ <span>Decorate</span></button><button data-a="postcards">↗ <span>Visit islands</span></button></nav>
+  <p class="service-note" id="service-note" role="status">Connecting the demo wallet…</p>
+</main>
+<div class="bottom" id="bot" hidden><div class="msg" id="msg" hidden></div><div id="sel" hidden><div class="t"><b id="sn"></b><small id="si"></small></div><button class="b g" id="su" data-a="selu"></button></div></div>
+<dialog id="dlg" aria-labelledby="dialog-title"></dialog><div id="toast" role="status" aria-live="polite"></div>
+<noscript><p style="padding:24px;text-align:center">Please enable JavaScript to build your island.</p></noscript>
+<script type="module" src="./app.mjs"></script>
 </body>
 </html>
