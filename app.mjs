@@ -2,7 +2,7 @@ import {BUILDINGS as B,THEMES,DECORATIONS,LESSONS,makeGame,hydrateGame,advanceGa
 import {createIslandRenderer} from './island-renderer.js';
 
 const $=selector=>document.querySelector(selector),dlg=$('#dlg'),cv=$('#cv');
-const KEY='hf_island_v2',META='hf_island_notes_v2',PENDING='hf_wallet_pending_v1';
+const KEY='hf_island_v2',META='hf_island_notes_v2',PENDING='hf_payment_pending_v2',RECEIPT='hf_payment_receipt_v2',CONNECTION='hf_bank_connection_pending_v1';
 const DAY=86400000,ST=[1,5,10,15,20,25,30,40,50,75,100,150,200,250,300,400,500,750,1000];
 const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const gbp=pence=>'£'+(pence/100).toLocaleString('en-GB',{minimumFractionDigits:pence%100?2:0,maximumFractionDigits:2});
@@ -16,6 +16,7 @@ const storedNotes=read(META,{});
 let notes=storedNotes&&typeof storedNotes==='object'&&!Array.isArray(storedNotes)?storedNotes:{},saved=read(KEY),legacy=read('hf_guest');
 let G=hydrateGame(saved||legacy,Date.now()),mode=null,ghost=null,sel=null,decorating=null,visiting=null;
 let wallet=null,walletOnline=false,busy=false,apiBusy=false,started=!!saved||!!legacy,pending=read(PENDING);
+let paymentReceipt=read(RECEIPT),bankAction=null,walletError={code:'BANKING_NOT_CONFIGURED',message:'Bank connection is being prepared. Your island is ready to play.'};
 let pendingSurprises=[],lastWalletCheck=0,lastSave=Date.now(),walletQueue=Promise.resolve(),storageFailed=false;
 const offline=advanceGame(G,Date.now());
 if(!Array.isArray(notes.seenAwards))notes.seenAwards=[];
@@ -46,9 +47,9 @@ function showGame(){started=true;$('#login').hidden=true;$('#game').hidden=false
 function api(path,body){
   const request=walletQueue.then(async()=>{
   const response=await fetch(path,{method:body===undefined?'GET':'POST',credentials:'same-origin',headers:body===undefined?{}:{'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body)});
-  const data=await response.json().catch(()=>({error:'The demo wallet returned an unreadable response.'}));
-  if(!response.ok){const error=new Error(data.error||'The demo wallet could not complete that action.');error.status=response.status;throw error}
-  if(data.mode!=='demo'||!Number.isSafeInteger(data.balancePence)||data.balancePence<0||!Number.isSafeInteger(data.rewardsPence)||data.rewardsPence<0)throw new Error('The wallet response could not be verified.');
+  const data=await response.json().catch(()=>({error:'Your wallet returned an unreadable response.'}));
+  if(!response.ok){const error=new Error(data.error||'Your wallet could not complete that action.');error.status=response.status;error.code=data.code;throw error}
+  if(data.mode!=='live'||data.currency!=='GBP'||data.providerConfirmed!==true||typeof data.walletId!=='string'||!data.walletId||!Number.isSafeInteger(data.balancePence)||data.balancePence<0||!Number.isSafeInteger(data.rewardsPence)||data.rewardsPence<0)throw new Error('The wallet response could not be verified.');
     return data;
   });
   walletQueue=request.catch(()=>{});
@@ -56,6 +57,11 @@ function api(path,body){
 }
 function acceptWallet(data){
   wallet=data;walletOnline=true;
+  walletError=null;
+  if(notes.walletId!==data.walletId){
+    notes.walletId=data.walletId;notes.seenAwards=[];notes.weekBaseline.cashAwardedPence=data.totalAwardedPence||0;notes.celebratedGoal=null;pendingSurprises=[];
+    if(paymentReceipt?.walletId!==data.walletId){paymentReceipt=null;write(RECEIPT,null)}
+  }
   if(!Number.isSafeInteger(notes.weekBaseline.cashAwardedPence)){
     const recent=(data.awarded||[]).filter(item=>item.createdAt>=notes.weekStarted).reduce((sum,item)=>sum+item.amountPence,0);
     notes.weekBaseline.cashAwardedPence=Math.max(0,(data.totalAwardedPence||0)-recent);
@@ -67,25 +73,35 @@ function acceptWallet(data){
 async function refreshWallet(check=false){
   if(apiBusy)return;
   apiBusy=true;
-  try{acceptWallet(await api(check?'/api/rewards/check':'/api/wallet',check?{}:undefined));lastWalletCheck=Date.now()}
-  catch{walletOnline=false;update()}
+  try{
+    acceptWallet(await api(check?'/api/rewards/check':'/api/wallet',check?{}:undefined));lastWalletCheck=Date.now();
+    if(paymentReceipt&&['pending','requires_action'].includes(paymentReceipt.status)){
+      const data=await api('/api/payments/'+encodeURIComponent(paymentReceipt.id));acceptWallet(data);
+      if(data.payment){paymentReceipt={...data.payment,walletId:data.walletId};write(RECEIPT,paymentReceipt)}
+    }
+  }
+  catch(error){walletOnline=false;walletError={code:error.code||'CONNECTION_UNAVAILABLE',message:error.status?error.message:'Your wallet is temporarily unavailable. Your island is ready to play.'};update()}
   finally{apiBusy=false}
 }
 async function mutateWallet(path,body){
   if(busy)return false;
-  if(!walletOnline){toast('The demo wallet is unavailable. Your island is still ready to play.');return false}
+  if(!walletOnline){toast('Your wallet is unavailable. Your island is still ready to play.');return false}
+  if(pending&&pending.walletId!==wallet.walletId){toast('This pending payment belongs to another account. Sign in to that account to check it.');return false}
   if(pending&&(pending.path!==path||JSON.stringify(pending.bodyWithoutKey)!==JSON.stringify(body))){openWallet();toast('Finish the pending wallet action before starting another.');return false}
   busy=true;
-  const operation=pending||{path,bodyWithoutKey:body,idempotencyKey:crypto.randomUUID()};
+  const operation=pending||{path,bodyWithoutKey:body,idempotencyKey:crypto.randomUUID(),walletId:wallet.walletId};
   pending=operation;
-  if(!write(PENDING,pending)){pending=null;busy=false;toast('Your browser could not save the transaction reference. Allow local storage before using the demo wallet.');return false}
+  if(!write(PENDING,pending)){pending=null;busy=false;toast('Your browser could not save the transaction reference. Allow local storage before using your wallet.');return false}
   dlg.querySelectorAll('[data-a="go"],[data-a="wgo"],[data-a="retry-wallet"]').forEach(button=>button.disabled=true);
   try{
     const data=await api(path,{...body,idempotencyKey:operation.idempotencyKey});
-    pending=null;write(PENDING,null);acceptWallet(data);return true;
+    if(!data.payment||typeof data.payment.id!=='string'||!['pending','requires_action','completed','failed'].includes(data.payment.status))throw new Error('The payment confirmation could not be verified.');
+    pending=null;write(PENDING,null);acceptWallet(data);
+    if(data.payment){paymentReceipt={...data.payment,walletId:data.walletId};write(RECEIPT,paymentReceipt)}
+    return data;
   }catch(error){
     if(error.status&&error.status<500){pending=null;write(PENDING,null)}
-    else walletOnline=false;
+    else{walletOnline=false;walletError={code:error.code||'PAYMENT_UNCONFIRMED',message:'Your payment result needs confirmation. Reconnect from your wallet to check it.'}}
     toast(error.status?error.message:'The wallet result is unconfirmed. Reconnect and retry the same action safely.');
     update();return false;
   }finally{busy=false;dlg.querySelectorAll('[data-a="retry-wallet"]').forEach(button=>button.disabled=false);if($('#cu'))syncDeposit();if($('#wu'))syncWithdrawal()}
@@ -94,7 +110,8 @@ async function retryWallet(){
   if(!pending)return;
   await refreshWallet();
   const operation=pending;
-  if(await mutateWallet(operation.path,operation.bodyWithoutKey)){dlg.close();toast('The demo wallet action is confirmed.');maybeCelebrate()}
+  const data=await mutateWallet(operation.path,operation.bodyWithoutKey);
+  if(data){if(data.payment?.status==='completed'){dlg.close();toast('Your payment is confirmed.');maybeCelebrate()}else openPaymentStatus(data.payment)}
 }
 
 function openOnboarding(){
@@ -127,7 +144,7 @@ function openShop(){
 }
 function openGoal(){
   const goal=G.goal,progress=goalProgress(G,wallet?.balancePence||0),remaining=goal?Math.max(0,goal.targetPence-(wallet?.balancePence||0)):0;
-  modal(goal?'Your next chapter':'Make room for a goal',`${goal?`<div class="card"><b>${esc(goal.name)}</b><p>${walletOnline?gbp(progress.savedPence)+' of '+gbp(goal.targetPence)+' in demo savings':'Reconnect the demo wallet to see current savings.'}</p>${goal.weeklyPence&&remaining?`<p class="sub">At your planned ${gbp(goal.weeklyPence)} a week, approximately ${Math.ceil(remaining/goal.weeklyPence)} weeks to go. This estimate excludes rewards.</p>`:''}</div>`:'<p>Choose something that matters to you, and an amount that leaves room for everyday life.</p>'}<form data-form="goal"><label class="field"><span>What are you saving for?</span><input id="goal-title" maxlength="48" value="${esc(goal?.name||'') }" placeholder="e.g. A little breathing room" required></label><label class="field"><span>Target (£)</span><input id="goal-target" type="number" min="1" max="10000000" step="0.01" inputmode="decimal" value="${goal?goal.targetPence/100:100}" required></label><label class="field"><span>Weekly plan (£, optional)</span><input id="goal-weekly" type="number" min="0" max="10000000" step="0.01" inputmode="decimal" value="${goal?goal.weeklyPence/100:0}"></label><p class="sub">This is your personal plan. It does not move money or set up a transfer. Change or pause it whenever you like.</p><p class="err" id="form-error" role="alert"></p><button class="b g cta" type="submit">${goal?'Save my plan':'Set my goal'}</button></form>${goal?'<div class="row"><button class="link" data-a="pause-plan">Pause weekly plan</button><button class="link" data-a="clear-goal">Put this goal aside</button></div>':''}`);
+  modal(goal?'Your next chapter':'Make room for a goal',`${goal?`<div class="card"><b>${esc(goal.name)}</b><p>${walletOnline?gbp(progress.savedPence)+' of '+gbp(goal.targetPence)+' in savings':'Reconnect your wallet to see current savings.'}</p>${goal.weeklyPence&&remaining?`<p class="sub">At your planned ${gbp(goal.weeklyPence)} a week, approximately ${Math.ceil(remaining/goal.weeklyPence)} weeks to go. This estimate excludes rewards.</p>`:''}</div>`:'<p>Choose something that matters to you, and an amount that leaves room for everyday life.</p>'}<form data-form="goal"><label class="field"><span>What are you saving for?</span><input id="goal-title" maxlength="48" value="${esc(goal?.name||'') }" placeholder="e.g. A little breathing room" required></label><label class="field"><span>Target (£)</span><input id="goal-target" type="number" min="1" max="10000000" step="0.01" inputmode="decimal" value="${goal?goal.targetPence/100:100}" required></label><label class="field"><span>Weekly plan (£, optional)</span><input id="goal-weekly" type="number" min="0" max="10000000" step="0.01" inputmode="decimal" value="${goal?goal.weeklyPence/100:0}"></label><p class="sub">This is your personal plan. It does not move money or set up a transfer. Change or pause it whenever you like.</p><p class="err" id="form-error" role="alert"></p><button class="b g cta" type="submit">${goal?'Save my plan':'Set my goal'}</button></form>${goal?'<div class="row"><button class="link" data-a="pause-plan">Pause weekly plan</button><button class="link" data-a="clear-goal">Put this goal aside</button></div>':''}`);
 }
 function openLearn(){
   modal('Small lessons, useful ideas',`<p>Take a moment to explore money at your own pace. Each completed lesson adds something to your island.</p>${LESSONS.map(lesson=>`<button class="choice" data-a="lesson" data-id="${lesson.id}"><b>${esc(lesson.title)}</b><p class="sub">${G.lessons.includes(lesson.id)?'Completed · revisit anytime':'+ '+lesson.gold+' game gold'+(lesson.unlock?' · a new decoration':'')}</p></button>`).join('')}`);
@@ -153,52 +170,85 @@ function syncDeposit(move=true){
   const input=$('#cu');if(!input)return;const amount=Number(input.value),okay=input.value.trim()!==''&&Number.isFinite(amount)&&amount>=1&&amount<=10000&&Math.abs(amount*100-Math.round(amount*100))<1e-6;fit(input);
   const slider=$('#sl');if(okay&&move)slider.value=ST.reduce((best,value,index)=>Math.abs(value-amount)<Math.abs(ST[best]-amount)?index:best,0);
   slider.style.setProperty('--p',slider.value/(ST.length-1)*100+'%');$('#go').disabled=!okay||!walletOnline||busy||!!pending;
-  $('#amount-error').textContent=!input.value?'':okay?'':amount<1?'Enter at least £1.':amount>10000?'The demo limit is £10,000 per deposit.':'Use no more than two decimal places.';
+  $('#amount-error').textContent=!input.value?'':okay?'':amount<1?'Enter at least £1.':amount>10000?'The limit is £10,000 per deposit.':'Use no more than two decimal places.';
 }
 function openDeposit(){
   if(visiting)returnHome();
-  modal('Deposit',`<div class="sup">Demo savings</div><div class="ap"><span>£</span><input id="cu" type="number" min="1" max="10000" step="0.01" inputmode="decimal" value="10" aria-label="Deposit amount"></div><input id="sl" class="sl" type="range" min="0" max="${ST.length-1}" step="1" value="2" aria-label="Choose a deposit amount"><div class="se"><span>£1</span><span>£1,000</span></div><p class="err" id="amount-error" role="status"></p><button class="b g cta" id="go" data-a="go">Deposit</button><p class="sub">Demo funds only · no bank transfer is made.</p>${!walletOnline?'<p class="err">The demo wallet is unavailable. Reconnect from the menu.</p>':''}${pending?'<p class="err">A previous wallet action needs confirmation. Open your wallet to retry it.</p>':''}`);syncDeposit();
+  modal('Deposit',`<div class="sup">Savings</div><div class="ap"><span>£</span><input id="cu" type="number" min="1" max="10000" step="0.01" inputmode="decimal" value="10" aria-label="Deposit amount"></div><input id="sl" class="sl" type="range" min="0" max="${ST.length-1}" step="1" value="2" aria-label="Choose a deposit amount"><div class="se"><span>£1</span><span>£1,000</span></div><p class="err" id="amount-error" role="status"></p><button class="b g cta" id="go" data-a="go">Deposit</button><p class="sub">Your balance updates after your deposit is confirmed.</p>${!walletOnline?'<p class="err">'+esc(walletError?.message||'Connect your account to make a deposit.')+'</p>':''}${pending?'<p class="err">A previous wallet action needs confirmation. Open your wallet to retry it.</p>':''}`);syncDeposit();
 }
 async function deposit(){
   const input=$('#cu');if(!input||$('#go').disabled)return;
-  const okay=await mutateWallet('/api/deposit',{amountPence:Math.round(Number(input.value)*100)});
-  if(!okay)return;
-  dlg.close();toast('Added to your demo savings.');maybeCelebrate();
+  const data=await mutateWallet('/api/deposit',{amountPence:Math.round(Number(input.value)*100)});
+  if(!data)return;
+  if(data.payment.status!=='completed'){openPaymentStatus(data.payment,'deposit');return}
+  dlg.close();toast('Your deposit is confirmed.');maybeCelebrate();
 }
 function syncWithdrawal(){
   const input=$('#wu');if(!input)return;fit(input);const amount=Number(input.value),available=input.dataset.source==='rewards'?(wallet?.rewardsPence||0):(wallet?.balancePence||0);$('#withdraw-go').disabled=busy||!!pending||!walletOnline||input.value.trim()===''||!Number.isFinite(amount)||amount<=0||Math.round(amount*100)>available||Math.abs(amount*100-Math.round(amount*100))>1e-6;
 }
 function openWithdrawal(source='savings'){
   const amount=source==='rewards'?(wallet?.rewardsPence||0):(wallet?.balancePence||0);
-  modal(source==='rewards'?'Your awarded rewards':'Withdraw',`<p class="sup">${source==='rewards'?'Demo rewards':'Demo savings'}</p><div class="ap"><span>£</span><input id="wu" data-source="${source}" type="number" min="0.01" max="${amount/100}" step="0.01" inputmode="decimal" value="${amount/100}" aria-label="Withdrawal amount"></div><p class="sub">Available ${gbp(amount)}. Your island and everything you have built stay yours.</p><button class="b g cta" id="withdraw-go" data-a="wgo">Withdraw</button><p class="sub">This records a demo withdrawal. No real payout is made.</p>`);syncWithdrawal();
+  modal(source==='rewards'?'Your awarded rewards':'Withdraw',`<p class="sup">${source==='rewards'?'Cash rewards':'Savings'}</p><div class="ap"><span>£</span><input id="wu" data-source="${source}" type="number" min="0.01" max="${amount/100}" step="0.01" inputmode="decimal" value="${amount/100}" aria-label="Withdrawal amount"></div><p class="sub">Available ${gbp(amount)}. Your island and everything you have built stay yours.</p><button class="b g cta" id="withdraw-go" data-a="wgo">Withdraw</button><p class="sub">Your withdrawal is confirmed by your banking provider.</p>`);syncWithdrawal();
 }
 async function withdraw(){
   if($('#withdraw-go').disabled)return;const input=$('#wu'),source=input.dataset.source,amountPence=Math.round(Number(input.value)*100),goalWasComplete=source==='savings'&&goalProgress(G,wallet.balancePence)?.complete;
-  if(!await mutateWallet('/api/withdraw',{amountPence,source}))return;
+  const data=await mutateWallet('/api/withdraw',{amountPence,source});
+  if(!data)return;
+  if(data.payment.status!=='completed'){openPaymentStatus(data.payment,'withdrawal');return}
   notes.withdrawals=(notes.withdrawals||0)+1;save();
-  modal(goalWasComplete?'A goal, brought to life':'Made room for real life',`<div class="sigil" aria-hidden="true">✧</div><div class="reward-amount" style="font-size:46px">${gbp(amountPence)}</div><p>Your demo withdrawal is recorded. Your island keeps growing, and everything you have built is still yours.</p><div class="stack"><button class="b g" data-a="close">Back to my island</button>${goalWasComplete?'<button class="b" data-a="goal">Choose my next goal</button>':''}</div>`,{celebration:true});
+  modal(goalWasComplete?'A goal, brought to life':'Made room for real life',`<div class="sigil" aria-hidden="true">✧</div><div class="reward-amount" style="font-size:46px">${gbp(amountPence)}</div><p>Your withdrawal is confirmed. Your island keeps growing, and everything you have built is still yours.</p><div class="stack"><button class="b g" data-a="close">Back to my island</button>${goalWasComplete?'<button class="b" data-a="goal">Choose my next goal</button>':''}</div>`,{celebration:true});
+}
+function openPaymentStatus(receipt=paymentReceipt,kind){
+  if(!receipt){toast('No payment confirmation is available yet.');return}
+  bankAction=null;
+  const action=kind||receipt.kind||'payment',label=action==='withdrawal'?'Withdrawal':action==='deposit'?'Deposit':action==='connection'?'Account connection':'Payment';
+  let title=label+' in progress',message='We are waiting for your banking provider to confirm this payment. Your displayed balance includes confirmed funds only.';
+  if(receipt.status==='requires_action'){title='Continue with your bank';message='Your bank needs your approval before this payment can continue.'}
+  else if(receipt.status==='failed'){title=label+' could not be completed';message='Your banking provider did not confirm this payment. Check your wallet before trying again.'}
+  else if(receipt.status==='completed'){title=label+' confirmed';message='Your banking provider has confirmed this payment. Your wallet shows the latest confirmed balance.'}
+  modal(title,`<p>${message}</p>${receipt.status==='requires_action'&&receipt.action?.type==='redirect'?'<button class="b g full cta" data-a="bank-auth">Continue with your bank</button>':''}<div class="stack"><button class="b" data-a="check-payment">Check payment status</button><button class="b" data-a="wallet">Back to wallet</button></div>`);
+}
+async function connectBank(){
+  if(busy)return;
+  const previous=read(CONNECTION),reference=typeof previous?.idempotencyKey==='string'?previous:{idempotencyKey:crypto.randomUUID()};
+  if(!write(CONNECTION,reference)){toast('Your browser could not save the connection reference. Allow local storage to continue.');return}
+  busy=true;
+  try{
+    const data=await api('/api/payout/connect',reference);acceptWallet(data);
+    if(!data.payment||data.payment.kind!=='connection')throw new Error('The account connection could not be verified.');
+    if(data.payment.status==='completed'){write(CONNECTION,null);openWallet()}
+    else if(data.payment.status==='requires_action'&&data.payment.action?.type==='redirect'){bankAction=data.payment.action;modal('Connect your account','<p>Continue securely with your banking provider to connect your account.</p><button class="b g full cta" data-a="bank-auth">Continue with your bank</button>')}
+    else openPaymentStatus(data.payment,'connection');
+  }
+  catch(error){if(error.status&&error.status<500)write(CONNECTION,null);toast(error.message)}
+  finally{busy=false}
+}
+function continueWithBank(){
+  const action=bankAction||paymentReceipt?.action;if(action?.type!=='redirect')return;
+  const url=new URL(action.url);if(url.protocol!=='https:'||url.username||url.password){toast('The bank approval link could not be verified.');return}
+  location.assign(url.href);
 }
 function openWallet(){
-  modal('Your demo wallet',`<p class="sub">No real money moves. Game gold is separate and cannot be withdrawn.</p><div class="summary-grid"><div class="card"><small>Demo savings</small><strong>${walletOnline?gbp(wallet.balancePence):'Unavailable'}</strong></div><div class="card"><small>Already awarded</small><strong>${walletOnline?gbp(wallet.rewardsPence):'Unavailable'}</strong></div></div>${pending?'<div class="card"><b>One action needs confirmation</b><p>Retrying uses the same request reference, so it will not be applied twice.</p><button class="b full" data-a="retry-wallet">Reconnect and retry</button></div>':''}<div class="stack"><button class="b g" data-a="dep">Deposit</button><button class="b" data-a="withdraw-savings" ${!walletOnline||!wallet?.balancePence?'disabled':''}>Withdraw savings</button><button class="b" data-a="withdraw-rewards" ${!walletOnline||!wallet?.rewardsPence?'disabled':''}>Withdraw awarded rewards</button></div><div class="row"><button class="link" data-a="bank">About bank connection</button><button class="link" data-a="reconnect">Reconnect</button></div><div class="card"><p>Any cash gifts are discretionary and may vary or stop. There is no promised return or future reward. Amounts shown as awarded are already credited to this demo wallet.</p></div><h3 style="margin-top:22px">Recent activity</h3>${(wallet?.transactions||[]).slice(0,10).map(item=>`<div class="receipt"><div>${item.type==='deposit'?'Added to savings':item.type==='reward'?'A gift from Holdfast':'Demo withdrawal'}<small>${new Date(item.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short'})} · ${item.source==='rewards'?'Rewards':'Savings'}</small></div><b>${item.type==='withdrawal'?'−':'+'}${gbp(item.amountPence)}</b></div>`).join('')||'<p class="sub">Your demo wallet activity will appear here.</p>'}`);
+  modal('Your wallet',`<p class="sub">Your savings and awarded cash rewards. Game gold is separate and cannot be withdrawn.</p><div class="summary-grid"><div class="card"><small>Savings</small><strong>${walletOnline?gbp(wallet.balancePence):'Unavailable'}</strong></div><div class="card"><small>Already awarded</small><strong>${walletOnline?gbp(wallet.rewardsPence):'Unavailable'}</strong></div></div>${pending?'<div class="card"><b>One action needs confirmation</b><p>Retrying uses the same request reference, so it will not be applied twice.</p><button class="b full" data-a="retry-wallet">Reconnect and retry</button></div>':''}<div class="stack"><button class="b g" data-a="dep">Deposit</button><button class="b" data-a="withdraw-savings" ${!walletOnline||!wallet?.balancePence?'disabled':''}>Withdraw savings</button><button class="b" data-a="withdraw-rewards" ${!walletOnline||!wallet?.rewardsPence?'disabled':''}>Withdraw awarded rewards</button></div>${paymentReceipt?'<button class="b full cta" data-a="payment-status">View latest payment</button>':''}<div class="row"><button class="link" data-a="bank">Bank connection</button><button class="link" data-a="reconnect">Reconnect</button></div><div class="card"><p>Any cash gifts are discretionary and may vary or stop. There is no promised return or future reward. Amounts shown as awarded are already credited to this wallet.</p></div><h3 style="margin-top:22px">Recent activity</h3>${(wallet?.transactions||[]).slice(0,10).map(item=>`<div class="receipt"><div>${item.type==='deposit'?'Added to savings':item.type==='reward'?'A gift from Holdfast':'Withdrawal'}<small>${new Date(item.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short'})} · ${item.source==='rewards'?'Rewards':'Savings'}</small></div><b>${item.type==='withdrawal'?'−':'+'}${gbp(item.amountPence)}</b></div>`).join('')||'<p class="sub">Your wallet activity will appear here.</p>'}`);
 }
-function openBank(){modal('Bank connection',`<p>The game experience comes first. Connection to the existing banking partner will be added separately.</p><div class="card"><b>No bank details needed here</b><p>Real deposits, payments and automatic transfers are not connected in this demo. We do not collect account details, banking passwords or permissions.</p></div><button class="b full cta" data-a="wallet">Back to demo wallet</button>`)}
-function openMenu(){modal('A little space for everything',`<div class="menu-list"><button class="b" data-a="wallet">Your demo wallet <span class="sp"></span>${walletOnline?gbp(wallet.rewardsPence)+' awarded':''}</button><button class="b" data-a="goal">Your savings goal & weekly plan</button><button class="b" data-a="recap">Your island journal</button><button class="b" data-a="learn">Learn something useful</button><button class="b" data-a="design">Themes & decorations</button><button class="b" data-a="postcards">Share & visit islands</button><button class="b" data-a="bank">Bank connection</button></div><p class="sub">Demo · no real money moves. Your savings plan never initiates a payment.</p>`)}
+function openBank(){modal('Your bank connection',`<p>Use your bank connection to add to savings, withdraw money and receive cash rewards.</p><div class="card"><b>Connection pending</b><p>The existing banking partner has not been connected to this app yet. Payments will become available once the connection is complete.</p></div><button class="b g full cta" data-a="bank-connect">Connect bank account</button><button class="b full cta" data-a="wallet">Back to wallet</button>`)}
+function openMenu(){modal('A little space for everything',`<div class="menu-list"><button class="b" data-a="wallet">Your wallet <span class="sp"></span>${walletOnline?gbp(wallet.rewardsPence)+' awarded':''}</button><button class="b" data-a="goal">Your savings goal & weekly plan</button><button class="b" data-a="recap">Your island journal</button><button class="b" data-a="learn">Learn something useful</button><button class="b" data-a="design">Themes & decorations</button><button class="b" data-a="postcards">Share & visit islands</button><button class="b" data-a="bank">Bank connection</button></div><p class="sub">Your weekly savings plan is a personal target. Transfers need your separate authorisation.</p>`)}
 
 function maybeCelebrate(){
   if(!started||dlg.open||mode||decorating||visiting)return;
-  if(pendingSurprises.length){
+  if(walletOnline&&pendingSurprises.length){
     const awards=pendingSurprises.splice(0),amount=awards.reduce((sum,item)=>sum+item.amountPence,0);
     notes.seenAwards=[...new Set([...notes.seenAwards,...awards.map(item=>item.id)])].slice(-500);save();
-    modal('A little something for you',`<div class="eyebrow">A gift from Holdfast</div><div class="reward-amount">${gbp(amount)}</div><p>Added to your demo rewards. Already yours.</p><p class="sub">A little thank-you, with no extra deposit needed. Your future gifts may vary or stop.</p><div class="stack"><button class="b g" data-a="wallet">View my rewards</button><button class="b" data-a="close">Enjoy my island</button></div>`,{celebration:true});beep(800);return;
+    modal('A little something for you',`<div class="eyebrow">A gift from Holdfast</div><div class="reward-amount">${gbp(amount)}</div><p>Added to your cash rewards. Already yours.</p><p class="sub">A little thank-you, with no extra deposit needed. Your future gifts may vary or stop.</p><div class="stack"><button class="b g" data-a="wallet">View my rewards</button><button class="b" data-a="close">Enjoy my island</button></div>`,{celebration:true});beep(800);return;
   }
   const progress=walletOnline?goalProgress(G,wallet?.balancePence||0):null;
   const goalKey=G.goal?G.goal.name+':'+G.goal.targetPence:null;
-  if(progress?.complete&&notes.celebratedGoal!==goalKey){notes.celebratedGoal=goalKey;save();modal('Look how far you have come',`<div class="sigil" aria-hidden="true">✧</div><p>You have reached <b>${esc(progress.name)}</b> in your demo savings. Take a moment to enjoy it.</p><div class="stack"><button class="b g" data-a="withdraw-savings">Use my savings</button><button class="b" data-a="goal">Choose what comes next</button></div>`,{celebration:true})}
+  if(progress?.complete&&notes.celebratedGoal!==goalKey){notes.celebratedGoal=goalKey;save();modal('Look how far you have come',`<div class="sigil" aria-hidden="true">✧</div><p>You have reached <b>${esc(progress.name)}</b> in your savings. Take a moment to enjoy it.</p><div class="stack"><button class="b g" data-a="withdraw-savings">Use my savings</button><button class="b" data-a="goal">Choose what comes next</button></div>`,{celebration:true})}
   else if(Date.now()-Math.max(notes.weekStarted,notes.journalSeen||0)>=7*DAY)openRecap();
 }
 function openRecap(){
   const since=notes.weekStarted,buildings=Math.max(0,G.b.filter(b=>b.ok).length-notes.weekBaseline.buildings),lessons=Math.max(0,G.lessons.length-notes.weekBaseline.lessons),awarded=Math.max(0,(wallet?.totalAwardedPence||0)-(notes.weekBaseline.cashAwardedPence||0));
-  modal('A page in your island journal',`<p>Since ${new Date(since).toLocaleDateString('en-GB',{day:'numeric',month:'long'})}, you have made this corner a little more yours.</p><div class="summary-grid"><div class="card"><small>Buildings completed</small><strong>${buildings}</strong></div><div class="card"><small>Ideas explored</small><strong>${lessons}</strong></div></div><div class="card"><b>${walletOnline?gbp(awarded):'Wallet unavailable'}</b><p>Demo cash gifts already awarded in this journal period. Game gold and future gifts are not included.</p></div><p class="sub">No daily streak to protect. Your island will be here when you are.</p><button class="b full cta" data-a="new-journal">Start a new journal page</button>`);
+  modal('A page in your island journal',`<p>Since ${new Date(since).toLocaleDateString('en-GB',{day:'numeric',month:'long'})}, you have made this corner a little more yours.</p><div class="summary-grid"><div class="card"><small>Buildings completed</small><strong>${buildings}</strong></div><div class="card"><small>Ideas explored</small><strong>${lessons}</strong></div></div><div class="card"><b>${walletOnline?gbp(awarded):'Wallet unavailable'}</b><p>Cash rewards already awarded in this journal period. Game gold and future gifts are not included.</p></div><p class="sub">No daily streak to protect. Your island will be here when you are.</p><button class="b full cta" data-a="new-journal">Start a new journal page</button>`);
   notes.journalSeen=Date.now();save();
 }
 function openPostcards(){
@@ -224,13 +274,13 @@ function update(){
   $('#island-caption').textContent=visiting?'A little window into someone else’s world.':G.b.length?'A little more yours, every day.':'A clear space. A new beginning.';
   $('#cancel').hidden=!(mode||decorating);document.querySelectorAll('.balance-action').forEach(button=>button.hidden=!!(mode||decorating));
   const progress=walletOnline?goalProgress(G,wallet.balancePence):null;
-  $('#goal-name').textContent=G.goal?.name||'What are you making room for?';$('#goal-copy').textContent=G.goal?(walletOnline?gbp(progress.savedPence)+' of '+gbp(progress.targetPence)+' in demo savings':'Reconnect to see your demo savings'):'Choose a savings goal, at your own pace.';
+  $('#goal-name').textContent=G.goal?.name||'What are you making room for?';$('#goal-copy').textContent=G.goal?(walletOnline?gbp(progress.savedPence)+' of '+gbp(progress.targetPence)+' in savings':'Reconnect to see your savings'):'Choose a savings goal, at your own pace.';
   $('#goal-number').textContent=progress?(progress.complete?'You made it ✧':Math.round(progress.ratio*100)+'%'):'Set a goal ↗';$('#goal-progress').hidden=!progress;$('#goal-fill').style.width=(progress?progress.ratio*100:0)+'%';
   const message=visiting?'You are visiting a read-only island. Your own island is safe at home.':mode?'Choose a clear space. '+(matchMedia('(pointer:fine)').matches?'Click to build · Esc to cancel':'Tap a spot, then tap again to build'):decorating?'Tap a clear tile to place your '+DECORATIONS[decorating].name.toLowerCase()+'.':!G.b.length?'Your first cabin is free. Open the Shop to choose its spot.':G.b.some(building=>building.ch)?'Something you built is ready. Tap its little chest.':!G.goal?'What would you like to make room for? Choose your first savings goal.':'';
   $('#msg').textContent=message;$('#msg').hidden=!message;
   $('#sel').hidden=!sel||!!mode||!!decorating||!!visiting;
   if(sel&&!visiting){$('#sn').textContent=B[sel.t].n;$('#si').textContent=sel.ok?(sel.ch?'Complete · game gold ready':'A permanent part of your island'):'Taking shape · '+duration(sel.d-sel.p)+' left';$('#su').hidden=!sel.ch;$('#su').textContent='Collect game gold'}
-  $('#service-note').textContent=storageFailed?'Your browser could not save this island. Keep this tab open or export a postcard.':walletOnline?'Demo wallet connected · game gold is separate from cash.':location.protocol==='file:'?'The island preview has no wallet connection. Start the local demo server to try demo deposits.':'The demo wallet is unavailable. Island building still works. Reconnect from the menu.';
+  $('#service-note').textContent=storageFailed?'Your browser could not save this island. Keep this tab open or export a postcard.':walletOnline?'Wallet connected · savings and cash rewards stay separate from game gold.':walletError.message;
   if($('#cu'))syncDeposit(false);if($('#wu'))syncWithdrawal();
 }
 
@@ -286,6 +336,10 @@ document.addEventListener('click',async event=>{
     else if(action==='retry-wallet')await retryWallet();
     else if(action==='reconnect'){await refreshWallet();if(walletOnline)await refreshWallet(true);openWallet()}
     else if(action==='bank')openBank();
+    else if(action==='bank-connect')await connectBank();
+    else if(action==='bank-auth')continueWithBank();
+    else if(action==='payment-status')openPaymentStatus();
+    else if(action==='check-payment'){await refreshWallet();openPaymentStatus()}
     else if(action==='recap')openRecap();
     else if(action==='new-journal'){notes.weekStarted=Date.now();notes.weekBaseline={buildings:G.b.filter(building=>building.ok).length,lessons:G.lessons.length,cashAwardedPence:wallet?.totalAwardedPence||0};save();dlg.close();toast('A fresh page, whenever you are ready.')}
     else if(action==='postcards')openPostcards();

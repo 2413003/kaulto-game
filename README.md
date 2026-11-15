@@ -1,46 +1,55 @@
 # Holdfast
 
-A local island-building and savings **demo**. Deposits, withdrawals and awarded cash rewards are simulated; no real money moves and no bank details are collected. Game gold is a separate, non-cash resource for building and decorating.
+An island-building savings game built around **real deposits, withdrawals and cash rewards** through the existing banking partnership. Game gold is a separate, non-cash resource used to build and decorate the island.
+
+## Current connection status
+
+Bank integration is intentionally deferred while the game experience is completed. The provider adapter is not configured in this repository yet. Financial APIs remain unavailable until it is connected; they do not create substitute balances, deposits, withdrawals or cash awards. An unavailable balance is shown as unknown, rather than as an invented amount. Island building remains available.
 
 ## Run
 
-Use Node.js 22 or newer, then run:
+Use Node.js 22 or newer:
 
 ```sh
 node server.mjs
 ```
 
-Open the local URL printed by the server (by default `http://127.0.0.1:3000`). The server listens only on the local computer; the `PORT` environment variable can select a different port. Run the automated checks with:
+Open the local URL printed by the server, normally `http://127.0.0.1:3000`. The `PORT` environment variable selects a different local port. Running the server does not activate bank payments by itself.
+
+Run the automated checks with:
 
 ```sh
 node --test tests/*.test.mjs
 ```
 
-If npm is installed, `npm start` and `npm test` run the same commands. The project uses Node's built-in server and test tools. No payment credentials are needed for the demo.
+`npm start` and `npm test` are equivalent aliases if npm is installed. No third-party packages are required.
 
-## What is included
+## Game features
 
-- A free starter cabin and island naming before any deposit.
-- Construction and gold progress while away, including when savings are zero.
-- Editable savings goals and a weekly plan. The plan does **not** initiate transfers.
-- Short money lessons, island themes and decorations.
-- Read-only island postcards that exclude financial balances.
-- Withdrawal celebrations that preserve the island and earned items.
-- A weekly recap of actual island progress and already awarded demo rewards.
+- A free starter cabin, island naming and progress while away, including at a zero savings balance.
+- Editable savings goals and a weekly plan. The plan does not initiate transfers.
+- Short money lessons, themes and decorations.
+- Read-only island postcards that exclude savings, goals and wallet activity.
+- Withdrawal celebrations that preserve earned island items.
+- An island journal showing progress and confirmed cash awards.
 - Deposit and shop icons beside their respective balances, with a £1 minimum deposit.
 
-## State and rewards
+## Money and rewards
 
-The server owns demo wallet balances, transactions and cash awards, persisted in `.data/demo-wallets.json`. Browser storage holds the cosmetic island and personal plan; editing it must not change wallet funds. A private guest-session cookie identifies the wallet across restarts. Losing that cookie or using another browser profile creates a different demo wallet. A demo guest session is not a verified banking identity.
+Verified customer identity, confirmed bank balances and payment receipts are authoritative. Browser storage contains the island and personal plan, not spendable money. A submitted deposit or withdrawal is a request; only confirmation from the banking backend can mark it completed or change the displayed financial balance. Pending payments remain pending.
 
-Legacy island progress is migrated without deleting the original local save. Old browser-controlled money amounts are not treated as authoritative server funds.
+Cash rewards are real, company-funded payments, separate from game gold. The £10 welcome allowance and up-to-10%-annually balance-time allowance are **internal spending ceilings**, not advertised rates, guaranteed returns or a promised payment schedule. A cash surprise appears only after the backend confirms it has been credited. Deposit attempts and game actions cannot mint cash rewards.
 
-The welcome allowance and ongoing balance-time allowance are internal reward budgets. They are **not** advertised interest rates, guaranteed returns or a promised cash schedule. The interface reveals a cash surprise only after it has been awarded. Awards are not increased by splitting deposits or repeatedly withdrawing and redepositing. Already awarded rewards remain separate from savings and game gold.
+Legacy island progress is preserved. Previously generated local test money and browser-controlled money values are never imported as real balances; existing files are left intact.
 
-## Banking integration
+## Provider integration
 
-The existing regulated banking partnership is independent of this local demo. Live bank connection is intentionally deferred while the game experience is built. No live partner adapter is connected here. That later integration will use the provider's documented authentication, account mapping, confirmed payment events, idempotent webhooks, reconciliation and payout authorisation. The demo does not claim that a bank connection, real payout or automatic savings transfer is active.
+`lib/banking-service.mjs` defines the boundary between the game and the banking partner. The adapter supplies trusted customer authentication, confirmed GBP wallet snapshots, deposit and withdrawal requests, account connection and confirmed reward checks. Payment requests carry idempotency references. Bank authentication redirects must use configured HTTPS origins.
+
+Set `BANKING_ADAPTER_MODULE` to the server-side ES module for the partner integration. It exports the adapter as its default export and an `allowedActionOrigins` array of approved HTTPS origins. Partner credentials and authentication stay on the server. With this setting absent, financial APIs return `BANKING_NOT_CONFIGURED` rather than generating money.
+
+The partner-specific adapter, customer authentication and confirmed-payment handling still need to be connected using the existing provider's API. No live deposit or payout is claimed to be active before that connection is complete.
 
 ## Verification
 
-Automated verification runs in Node and includes model, ledger, HTTP and app-behavior checks. The app tests use a minimal DOM substitute, so they do not verify visual layout. Browser visual verification has not been performed: the available preview environment blocked local-file navigation. Do not bypass that browser policy.
+Automated checks cover game progression, financial service contracts, request handling and application behaviour. Provider fixtures exist only in tests. Application tests use a minimal DOM substitute and do not verify layout. Browser visual verification has not been performed because the available preview environment blocked local-file navigation.
