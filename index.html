@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gold Rush Tycoon</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛏️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{font-family:Sora,system-ui,sans-serif}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%}
+body{color:#fff;background:linear-gradient(160deg,#1e1b4b,#4c1d95 50%,#be185d) fixed;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);overflow-x:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+[hidden]{display:none!important}
+.wrap{max-width:900px;margin:0 auto;padding:14px 14px 120px}
+.top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.pill{background:rgba(0,0,0,.35);border:2px solid rgba(255,255,255,.25);border-radius:999px;padding:8px 16px;font-weight:800;font-size:18px;display:flex;gap:8px;align-items:center}
+.pill.big{font-size:24px;flex:1;min-width:150px;border-color:#ffd54a;box-shadow:0 0 18px rgba(255,213,74,.4)}
+.sp{flex:1}
+.link{background:none;border:0;text-decoration:underline;opacity:.8;font-size:13px}
+h1{margin:18px 0 4px;font-size:clamp(26px,6vw,40px);font-weight:800;letter-spacing:-.02em;text-align:center;text-shadow:0 4px 0 rgba(0,0,0,.3)}
+.sub{text-align:center;opacity:.85;margin:0 0 14px;font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.plot{--c:#fff;position:relative;background:rgba(255,255,255,.12);backdrop-filter:blur(6px);border:3px solid var(--c);border-radius:22px;padding:14px;display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center;transition:transform .12s;user-select:none;box-shadow:0 8px 0 rgba(0,0,0,.25)}
+.plot:active{transform:translateY(4px);box-shadow:0 4px 0 rgba(0,0,0,.25)}
+.plot[data-a=collect]{cursor:pointer;background:linear-gradient(180deg,color-mix(in srgb,var(--c) 30%,transparent),rgba(255,255,255,.1))}
+.plot.full{animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 8px 0 rgba(0,0,0,.25),0 0 30px var(--c);transform:scale(1.025)}}
+.plot.empty,.plot.lock{border-style:dashed;border-color:rgba(255,255,255,.5);justify-content:center;min-height:200px}
+.plot.empty{cursor:pointer}
+.ico{font-size:54px;line-height:1;filter:drop-shadow(0 6px 4px rgba(0,0,0,.35));animation:bob 2.4s ease-in-out infinite}
+.lock .ico,.empty .ico{animation:none;opacity:.8}
+@keyframes bob{50%{transform:translateY(-5px) rotate(-4deg)}}
+.lv{position:absolute;top:10px;right:10px;background:var(--c);color:#1b1035;font-weight:800;font-size:12px;padding:3px 10px;border-radius:999px}
+.bar{width:100%;height:20px;background:rgba(0,0,0,.4);border-radius:999px;overflow:hidden;border:2px solid rgba(255,255,255,.3)}
+.bar i{display:block;height:100%;width:0;background:repeating-linear-gradient(45deg,var(--c),var(--c) 10px,color-mix(in srgb,var(--c) 70%,#fff) 10px,color-mix(in srgb,var(--c) 70%,#fff) 20px);transition:width .25s linear}
+.st{font-weight:700;font-size:14px;min-height:21px}
+small{opacity:.85;font-size:12px}
+.b{border:0;border-radius:14px;padding:11px 16px;font-weight:800;background:linear-gradient(180deg,#ffe066,#ffb300);color:#3b2300;box-shadow:0 5px 0 #b37400;width:100%}
+.b:active{transform:translateY(3px);box-shadow:0 2px 0 #b37400}
+.b:disabled{background:#8a7fa8;color:#d9d2ea;box-shadow:0 5px 0 #5c5278;cursor:not-allowed}
+.b.up{background:linear-gradient(180deg,#86efac,#22c55e);box-shadow:0 5px 0 #15803d;color:#052e16;margin-top:4px}
+.b.up:disabled{background:#8a7fa8;box-shadow:0 5px 0 #5c5278;color:#d9d2ea}
+.bottom{position:fixed;left:0;right:0;bottom:0;padding:12px 14px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(0deg,rgba(30,27,75,.95),rgba(30,27,75,0))}
+.bottom .b{max-width:520px;display:block;margin:0 auto;font-size:19px;padding:15px}
+.auth{max-width:380px;margin:9vh auto 0;padding:0 20px;text-align:center}
+.auth .big{font-size:84px;animation:bob 2s ease-in-out infinite}
+.auth .b{margin-top:14px;font-size:17px;padding:14px}
+.auth .b.alt{background:rgba(255,255,255,.18);box-shadow:0 5px 0 rgba(0,0,0,.3);color:#fff}
+.err{color:#fecaca;font-size:13px;min-height:20px}
+dialog{border:0;border-radius:24px;padding:22px;width:min(400px,92vw);background:linear-gradient(160deg,#312e81,#6b21a8);color:#fff;font-family:inherit;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+dialog::backdrop{background:rgba(0,0,0,.6)}
+dialog h2{margin:0 0 10px;text-align:center}
+.opt{display:flex;gap:12px;align-items:center;margin-top:10px;background:rgba(255,255,255,.12);padding:10px;border-radius:16px;text-align:left}
+.opt .ico{font-size:36px;animation:none}
+.opt div{flex:1;font-size:13px}.opt b{font-size:15px}
+.opt .b{width:auto;padding:9px 12px;font-size:13px}
+.pa{position:fixed;pointer-events:none;z-index:99;font-size:24px;animation:fly .9s ease-out forwards}
+@keyframes fly{to{transform:translate(var(--x),var(--y)) rotate(var(--r)) scale(.5);opacity:0}}
+.pop{position:fixed;pointer-events:none;z-index:100;font-weight:800;font-size:26px;color:#ffe066;text-shadow:0 3px 0 #7a4b00,0 0 12px #000;animation:rise 1.1s ease-out forwards;transform:translateX(-50%)}
+@keyframes rise{to{transform:translate(-50%,-80px) scale(1.3);opacity:0}}
+#toast{position:fixed;left:50%;top:18px;transform:translateX(-50%);background:#fff;color:#1b1035;font-weight:700;padding:10px 18px;border-radius:999px;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.4);transition:opacity .3s;opacity:0;pointer-events:none;font-size:14px}
+</style>
+</head>
+<body>
+<main class="auth" id="login" hidden>
+  <div class="big">⛏️</div>
+  <h1>Gold Rush Tycoon</h1>
+  <p class="sub">Build mines. Upgrade them. Come back every day to collect your fortune!</p>
+  <p class="err" id="err" role="alert"></p>
+  <button class="b" data-a="g">Continue with Google</button>
+  <button class="b alt" data-a="guest">Play as guest</button>
+</main>
+
+<div class="wrap" id="game" hidden>
+  <div class="top">
+    <div class="pill big">🪙 <span id="coins">0</span></div>
+    <div class="pill" title="Daily login streak">🔥 <span id="streak">0</span></div>
+    <button class="link" data-a="so" id="so">Sign out</button>
+  </div>
+  <h1>Gold Rush Tycoon</h1>
+  <p class="sub">Mines fill up for 24 hours, then stop. Collect daily so nothing goes to waste!</p>
+  <div class="grid" id="grid"></div>
+  <div class="bottom"><button class="b" id="all" data-a="all">Collect all</button></div>
+</div>
+
+<dialog id="dlg"></dialog>
+<div id="toast"></div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
+import {getAuth,onAuthStateChanged,GoogleAuthProvider,signInWithPopup,signOut} from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
+import {getFirestore,doc,setDoc,getDoc} from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
+
+const CFG={apiKey:"AIzaSyAJioajokVOh_a0DH9vldeCAz2jzTTzMG8",authDomain:"kaulto-investor-dashboard.firebaseapp.com",projectId:"kaulto-investor-dashboard",storageBucket:"kaulto-investor-dashboard.firebasestorage.app",messagingSenderId:"502424779951",appId:"1:502424779951:web:8cfe3de97dcfcc2614685a"};
+const fb=initializeApp(CFG),auth=getAuth(fb),db=getFirestore(fb);
+
+const $=s=>document.querySelector(s),dlg=$('#dlg');
+const T={
+  gold:{n:'Gold Mine',i:'⛏️',r:10,c:50,col:'#ffb300'},
+  crystal:{n:'Crystal Mine',i:'💎',r:45,c:600,col:'#22d3ee'},
+  lava:{n:'Lava Pump',i:'🌋',r:180,c:5000,col:'#ff6b3d'},
+  royal:{n:'Royal Vault',i:'👑',r:800,c:40000,col:'#c084fc'}
+};
+const MAXL=10,CAP_H=24,UNL=[0,0,0,500,5000,50000];
+const rate=(t,l)=>T[t].r*Math.pow(1.5,l-1);
+const upCost=(t,l)=>Math.round(T[t].c*.7*Math.pow(1.85,l));
+const stored=(p,n)=>{const r=rate(p.t,p.l);return Math.min(r*CAP_H,r*(n-p.c)/36e5)};
+const fmt=n=>{n=Math.floor(n);const u=['','K','M','B','T'];let i=0,x=n;while(x>=1000&&i<4){x/=1000;i++}return(i?x.toFixed(x<10?2:x<100?1:0):x)+u[i]};
+const ymd=t=>new Date(t).toISOString().slice(0,10);
+const fresh=()=>({coins:150,plots:[{t:'gold',l:1,c:Date.now()-72e5},null,null,0,0,0],streak:0,lastDay:'',total:0,ts:0});
+
+let G=fresh(),U=null,timer,saveT;
+
+function toast(m){const t=$('#toast');t.textContent=m;t.style.opacity=1;clearTimeout(toast.h);toast.h=setTimeout(()=>t.style.opacity=0,1800)}
+let ac;function beep(f=520){try{ac=ac||new AudioContext();const o=ac.createOscillator(),g=ac.createGain();o.type='triangle';o.frequency.value=f;o.frequency.exponentialRampToValueAtTime(f*1.6,ac.currentTime+.12);g.gain.setValueAtTime(.12,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.18);o.connect(g).connect(ac.destination);o.start();o.stop(ac.currentTime+.2)}catch{}}
+
+function fx(el,text,emoji='🪙'){
+  if(!el)return;const r=el.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
+  const p=document.createElement('div');p.className='pop';p.textContent=text;p.style.left=cx+'px';p.style.top=cy+'px';document.body.append(p);setTimeout(()=>p.remove(),1100);
+  for(let k=0;k<12;k++){const s=document.createElement('span');s.className='pa';s.textContent=emoji;s.style.left=cx+'px';s.style.top=cy+'px';
+    s.style.setProperty('--x',(Math.random()*240-120)+'px');s.style.setProperty('--y',(Math.random()*-200-20)+'px');s.style.setProperty('--r',(Math.random()*720-360)+'deg');document.body.append(s);setTimeout(()=>s.remove(),900)}
+}
+
+function save(){
+  G.ts=Date.now();const k='gr_'+(U?U.uid:'guest');
+  try{localStorage[k]=JSON.stringify(G)}catch{}
+  if(!U)return;clearTimeout(saveT);
+  saveT=setTimeout(()=>setDoc(doc(db,'mines',U.uid),JSON.parse(JSON.stringify(G))).catch(()=>{}),1200);
+}
+async function load(){
+  const k='gr_'+(U?U.uid:'guest');let g=null;
+  try{g=JSON.parse(localStorage[k]||'null')}catch{}
+  if(U){try{const s=await getDoc(doc(db,'mines',U.uid));if(s.exists()&&(!g||(s.data().ts||0)>=(g.ts||0)))g=s.data()}catch{}}
+  G=g&&Array.isArray(g.plots)?{...fresh(),...g}:fresh();
+}
+
+function render(){
+  $('#coins').textContent=fmt(G.coins);$('#streak').textContent=G.streak;
+  $('#grid').innerHTML=G.plots.map((p,i)=>{
+    if(p===0)return`<div class="plot lock"><div class="ico">🔒</div><b>Locked plot</b><button class="b" data-a="unlock" data-i="${i}" ${G.coins<UNL[i]?'disabled':''}>Unlock 🪙 ${fmt(UNL[i])}</button></div>`;
+    if(!p)return`<div class="plot empty" data-a="build" data-i="${i}"><div class="ico">➕</div><b>Build a mine</b><small>Tap to choose</small></div>`;
+    const t=T[p.t],r=rate(p.t,p.l),max=p.l>=MAXL,uc=upCost(p.t,p.l);
+    return`<div class="plot" style="--c:${t.col}" data-a="collect" data-i="${i}" id="p${i}"><span class="lv">Lv ${p.l}${max?' · MAX':''}</span><div class="ico">${t.i}</div><b>${t.n}</b><div class="bar"><i data-f="${i}"></i></div><div class="st" data-s="${i}"></div><small>${fmt(r)}/hr · holds ${fmt(r*CAP_H)}</small>${max?'':`<button class="b up" data-a="up" data-i="${i}" ${G.coins<uc?'disabled':''}>⬆ Upgrade 🪙 ${fmt(uc)}</button>`}</div>`;
+  }).join('');
+  tick();
+}
+function tick(){
+  const n=Date.now();let tot=0;
+  G.plots.forEach((p,i)=>{
+    if(!p)return;const cap=rate(p.t,p.l)*CAP_H,s=stored(p,n);tot+=s;
+    const f=document.querySelector(`[data-f="${i}"]`);if(!f)return;
+    const full=s>=cap,left=(cap-s)/rate(p.t,p.l)*36e5,h=Math.floor(left/36e5),m=Math.floor(left%36e5/6e4);
+    f.style.width=s/cap*100+'%';
+    document.querySelector(`[data-s="${i}"]`).textContent=full?'🔥 FULL! Collect now':'🪙 '+fmt(s)+' · full in '+h+'h '+m+'m';
+    document.getElementById('p'+i).classList.toggle('full',full);
+  });
+  $('#all').textContent='💰 Collect all  🪙 '+fmt(tot);
+}
+
+function collect(i){
+  const p=G.plots[i],s=Math.floor(stored(p,Date.now())),el=document.getElementById('p'+i);
+  if(s<1)return toast('Nothing to collect yet, give it a little time!');
+  G.coins+=s;G.total+=s;p.c=Date.now();fx(el,'+'+fmt(s));beep(660);save();render();
+}
+function collectAll(){
+  const n=Date.now();let tot=0;
+  G.plots.forEach(p=>{if(p){const s=Math.floor(stored(p,n));if(s>0){tot+=s;p.c=n}}});
+  if(tot<1)return toast('Nothing to collect yet!');
+  G.coins+=tot;G.total+=tot;fx($('#all'),'+'+fmt(tot));beep(740);save();render();
+}
+function openBuild(i){
+  dlg.innerHTML=`<h2>Choose a mine</h2>${Object.entries(T).map(([k,t])=>`<div class="opt"><div class="ico">${t.i}</div><div><b>${t.n}</b><br>${fmt(t.r)}/hr at level 1</div><button class="b" data-a="pick" data-t="${k}" data-i="${i}" ${G.coins<t.c?'disabled':''}>🪙 ${fmt(t.c)}</button></div>`).join('')}<button class="link" style="margin:14px auto 0;display:block;color:#fff" data-a="close">Cancel</button>`;
+  dlg.showModal();
+}
+function build(i,k){
+  const t=T[k];if(G.coins<t.c)return;G.coins-=t.c;G.plots[i]={t:k,l:1,c:Date.now()};
+  dlg.close();save();render();fx(document.getElementById('p'+i),'Built!','✨');beep(880);
+}
+function upgrade(i){
+  const p=G.plots[i],c=upCost(p.t,p.l);if(G.coins<c||p.l>=MAXL)return;
+  // bank what the mine has made so far at the old rate
+  const s=stored(p,Date.now());G.coins-=c;G.coins+=Math.floor(s);G.total+=Math.floor(s);p.l++;p.c=Date.now();
+  save();render();fx(document.getElementById('p'+i),'Level '+p.l+'!','🎉');beep(980);
+}
+function unlock(i){if(G.coins<UNL[i])return;G.coins-=UNL[i];G.plots[i]=null;save();render();beep(600)}
+
+function daily(){
+  const today=ymd(Date.now());if(G.lastDay===today)return;
+  G.streak=G.lastDay===ymd(Date.now()-864e5)?G.streak+1:1;G.lastDay=today;
+  const b=100*Math.min(G.streak,7);G.coins+=b;save();
+  dlg.innerHTML=`<h2>🎁 Daily bonus!</h2><p style="text-align:center;font-size:44px;margin:6px 0">🪙 ${fmt(b)}</p><p style="text-align:center;margin:0 0 14px">🔥 ${G.streak}-day streak${G.streak<7?'. Keep it going for bigger bonuses, up to day 7!':'. Max bonus, keep it alive!'}</p><button class="b" data-a="close">Awesome!</button>`;
+  dlg.showModal();beep(900);
+}
+
+function show(logged){$('#login').hidden=logged;$('#game').hidden=!logged;clearInterval(timer);if(logged){render();timer=setInterval(tick,250)}}
+async function start(){await load();show(true);daily();render()}
+
+onAuthStateChanged(auth,async u=>{U=u;if(u)await start();else if(!window.__guest)show(false)});
+
+document.addEventListener('click',async e=>{
+  const el=e.target.closest('[data-a]');if(!el)return;
+  const a=el.dataset.a,i=+el.dataset.i;
+  if(a==='collect')collect(i);
+  else if(a==='all')collectAll();
+  else if(a==='up')upgrade(i);
+  else if(a==='build')openBuild(i);
+  else if(a==='pick')build(i,el.dataset.t);
+  else if(a==='unlock')unlock(i);
+  else if(a==='close')dlg.close();
+  else if(a==='guest'){window.__guest=1;U=null;await start();$('#so').textContent='Exit guest'}
+  else if(a==='so'){window.__guest=0;try{await signOut(auth)}catch{}U=null;show(false)}
+  else if(a==='g'){
+    try{await signInWithPopup(auth,new GoogleAuthProvider());$('#so').textContent='Sign out'}
+    catch(x){$('#err').textContent=['auth/popup-closed-by-user','auth/cancelled-popup-request'].includes(x.code)?'':'Google sign-in did not complete. Allow pop-ups and check this site is an authorised domain in Firebase.'}
+  }
+});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!$('#game').hidden)render()});
+addEventListener('beforeunload',()=>{if(U)save()});
+</script>
+</body>
+</html>
